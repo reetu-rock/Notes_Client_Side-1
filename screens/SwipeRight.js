@@ -1,10 +1,11 @@
 import * as React from 'react';
-import {View, useWindowDimensions} from 'react-native';
+import {useWindowDimensions} from 'react-native';
 import {TabView, SceneMap} from 'react-native-tab-view';
 import Home from '../components/Home';
 import Notes from '../components/Notes';
 import Document from './Document';
 import RemindCalendar from './RemindCalendar';
+import HomeCategory from './HomeCategory';
 //import Maps from './Maps';
 
 export default function TabViewExample() {
@@ -16,7 +17,8 @@ export default function TabViewExample() {
     {key: 'second', title: 'Notes'},
     {key: 'third', title: 'Docs'},
     {key: 'fourth', title: 'Reminder'},
-    // {key: 'fifth', title: 'Maps'},
+    {key: 'fifth', title: 'test'},
+    //{key: 'fifth', title: 'Maps'},
   ]);
 
   const renderScene = SceneMap({
@@ -24,7 +26,8 @@ export default function TabViewExample() {
     second: Notes,
     third: Document,
     fourth: RemindCalendar,
-    // fifth: Maps,
+    fifth: HomeCategory,
+    //fifth: Maps,
   });
 
   return (

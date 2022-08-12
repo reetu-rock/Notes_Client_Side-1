@@ -1,5 +1,5 @@
 import React from 'react';
-import {Text, StyleSheet, View} from 'react-native';
+import {StyleSheet} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import Home from './components/Home';
 import SignIn from './components/SignIn';
@@ -16,8 +16,10 @@ import Showpdf from './screens/Showpdf';
 
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import LocalScheduledNotification from './components/LocalScheduledNotification';
+import HomeCategory from './screens/HomeCategory';
 const App = () => {
   const Stack = createNativeStackNavigator();
+  //const Tab=
   return (
     <NavigationContainer style={styles.container}>
       <Stack.Navigator>
@@ -65,6 +67,11 @@ const App = () => {
           options={{headerShown: false}}
           name="RemindCalendar"
           component={RemindCalendar}
+        />
+        <Stack.Screen
+          options={{headerShown: false}}
+          name="HomeCategory"
+          component={HomeCategory}
         />
       </Stack.Navigator>
     </NavigationContainer>

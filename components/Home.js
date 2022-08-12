@@ -49,6 +49,8 @@ const Home = () => {
   const [CATID, setCATID] = useState('');
   const [PhotoUrl, setPhotoUrl] = useState('');
   const [modalVisible1, setModalVisible1] = useState(false);
+  const [RenderState, setRenderState] = useState(null);
+  const [Tray, setTray] = useState(false);
 
   const storeData = async todos => {
     try {
@@ -277,7 +279,6 @@ const Home = () => {
   };
 
   //Adding userId from school wise
-
   useEffect(() => {
     axios
       .post(
@@ -299,47 +300,50 @@ const Home = () => {
   console.log('Saved user ID ' + UserID);
 
   //adding todo
+
+  const catadd = () => {
+    if (value == 1) {
+      setCatname('General');
+      setCATID('49');
+      setColor('#66ff33');
+    }
+    if (value == 2) {
+      setCatname('home');
+      setCATID('1');
+      setColor('#3399ff');
+    }
+    if (value == 3) {
+      setCatname('office');
+      setCATID('3');
+      setColor('#ff66ff');
+    }
+    if (value == 4) {
+      setCatname('medical');
+      setCATID('4');
+      setColor('#666633');
+    }
+    if (value == 5) {
+      setCatname('Vehicle');
+      setCATID('18');
+      setColor('#9900ff');
+    }
+    if (value == 6) {
+      setCatname('Bills');
+      setCATID('19');
+      setColor('#666699');
+    }
+    if (value == 7) {
+      setCatname(Category);
+      setCATID('false');
+      setColor('#993333');
+    }
+  };
   const addTodo = () => {
     setModalVisible(!modalVisible);
 
     if (Reach) {
       if (!todo) return;
       else {
-        if (value == 1) {
-          setCatname('General');
-          setCATID('17');
-          setColor('#66ff33');
-        }
-        if (value == 2) {
-          setCatname('home');
-          setCATID('1');
-          setColor('#3399ff');
-        }
-        if (value == 3) {
-          setCatname('office');
-          setCATID('3');
-          setColor('#ff66ff');
-        }
-        if (value == 4) {
-          setCatname('medical');
-          setCATID('4');
-          setColor('#666633');
-        }
-        if (value == 5) {
-          setCatname('Vehicle');
-          setCATID('18');
-          setColor('#9900ff');
-        }
-        if (value == 6) {
-          setCatname('Bills');
-          setCATID('19');
-          setColor('#666699');
-        }
-        if (value == 7) {
-          setCatname(Category);
-          setCATID('false');
-          setColor('#993333');
-        }
         axios
           .post(
             'https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/77/ledger_add',
@@ -379,64 +383,65 @@ const Home = () => {
 
         setTodo('');
         setCategory('');
-        setValue(null);
       }
     } else {
       if (!todo) return;
-      if (value == 1) {
-        setCatname('General');
-        setCATID('17');
-        setColor('#66ff33');
+      // if (value == 1) {
+      //   setCatname('General');
+      //   setCATID('17');
+      //   setColor('#66ff33');
+      // }
+      // if (value == 2) {
+      //   setCatname('home');
+      //   setCATID('1');
+      //   setColor('#3399ff');
+      // }
+      // if (value == 3) {
+      //   setCatname('office');
+      //   setCATID('3');
+      //   setColor('#ff66ff');
+      // }
+      // if (value == 4) {
+      //   setCatname('medical');
+      //   setCATID('4');
+      //   setColor('#666633');
+      // }
+      // if (value == 5) {
+      //   setCatname('Vehicle');
+      //   setCATID('18');
+      //   setColor('#9900ff');
+      // }
+      // if (value == 6) {
+      //   setCatname('Bills');
+      //   setCATID('19');
+      //   setColor('#666699');
+      // }
+      // if (value == 7) {
+      //   setCatname(Category);
+      //   setCATID('false');
+      //   setColor('#993333');
+      // }
+      else {
+        console.log(value);
+        console.log(Catname);
+        console.log(CATID);
+        console.log(Color);
+        let data = [
+          ...todos,
+          {
+            Id: uuid.v4(),
+            guid: Date.now(),
+            catId: CATID,
+            notes: todo,
+            cat: Catname,
+            color: Color,
+          },
+        ];
+        setTodos(data);
+        setTodo('');
+        setCategory('');
+        storeData(data);
       }
-      if (value == 2) {
-        setCatname('home');
-        setCATID('1');
-        setColor('#3399ff');
-      }
-      if (value == 3) {
-        setCatname('office');
-        setCATID('3');
-        setColor('#ff66ff');
-      }
-      if (value == 4) {
-        setCatname('medical');
-        setCATID('4');
-        setColor('#666633');
-      }
-      if (value == 5) {
-        setCatname('Vehicle');
-        setCATID('18');
-        setColor('#9900ff');
-      }
-      if (value == 6) {
-        setCatname('Bills');
-        setCATID('19');
-        setColor('#666699');
-      }
-      if (value == 7) {
-        setCatname(Category);
-        setCATID('false');
-        setColor('#993333');
-      }
-      console.log(value);
-      console.log(Catname);
-      console.log(CATID);
-      console.log(Color);
-      let data = [
-        ...todos,
-        {
-          Id: uuid.v4(),
-          guid: Date.now(),
-          catId: CATID,
-          notes: todo,
-          cat: Catname,
-          color: Color,
-        },
-      ];
-      setTodos(data);
-      setTodo('');
-      setCategory('');
-      storeData(data);
     }
     setEdit(true);
   };
@@ -489,6 +494,19 @@ const Home = () => {
 
   const onSelectSwitch = index => {
     //alert('Selected index: ' + index);
+  };
+
+  const RenderTray = () => {
+    setTray(!Tray);
+  };
+
+  const Render = Id => {
+    todos.map(item => {
+      if (item.Id === Id && Tray) {
+        console.log(Id);
+        setRenderState(Id);
+      }
+    });
   };
 
   return (
@@ -591,76 +609,108 @@ const Home = () => {
                   }}>
                   <Text style={styles.txt}>{item.Notes}</Text>
                 </View>
-                <View style={styles.todo1}>
+                {/* Button Started */}
+                <View style={styles.tray}>
                   <TouchableOpacity
-                    name="Reminder"
+                    name="Button tray"
                     size={24}
                     color="black"
-                    onPress={showDatePicker}
+                    onPress={() => {
+                      Render(item.Id);
+                    }}
                     onPressIn={() => {
-                      Picker(item.info);
+                      RenderTray();
                     }}>
                     <Image
                       style={{
                         height: 35,
-                        //borderRadius: 50,
                         width: 35,
-                        //margin: 2,
-                        marginRight: 10,
-                        marginLeft: -10,
-
-                        marginBottom: 10,
+                        marginLeft: -15,
+                        marginTop: 15,
                         alignSelf: 'center',
                       }}
-                      source={require('../assets/remind.png')}
+                      source={require('../assets/options.png')}
                     />
                   </TouchableOpacity>
-                  <DateTimePickerModal
-                    isVisible={dateTimePickerVisible}
-                    mode="datetime"
-                    onConfirm={handleConfirmDateTime} //, item.info)}
-                    onCancel={hideDateTimePicker}
-                  />
-                  <TouchableOpacity
-                    name="edit"
-                    size={24}
-                    color="black"
-                    onPress={() => edittodo(item.Id)}>
-                    <Image
-                      style={styles.custom_button}
-                      source={require('../assets/edit.png')}
-                    />
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    name="delete"
-                    size={24}
-                    color="black"
-                    onPress={() => deletetodo(item.Id)}>
-                    <Image
-                      style={styles.custom_button}
-                      source={require('../assets/delete.png')}
-                    />
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    name="share"
-                    size={24}
-                    color="black"
-                    onPress={() => {
-                      share(item.Id);
-                    }}>
-                    <Image
-                      style={styles.custom_button}
-                      source={require('../assets/share.png')}
-                    />
-                  </TouchableOpacity>
-                  <CustomSwitch
-                    selectionMode={1}
-                    roundCorner={true}
-                    option1={'Active'}
-                    option2={'Done'}
-                    onSelectSwitch={onSelectSwitch}
-                    selectionColor={'green'}
-                  />
+
+                  {
+                    //Render ? <View></View> : <View></View>}
+                    item.Id == RenderState && Tray ? (
+                      <View style={styles.todo1}>
+                        <TouchableOpacity
+                          name="Reminder"
+                          size={24}
+                          color="black"
+                          onPress={showDatePicker}
+                          onPressIn={() => {
+                            Picker(item.info);
+                          }}>
+                          <Image
+                            style={{
+                              height: 35,
+                              //borderRadius: 50,
+                              width: 35,
+                              //margin: 2,
+                              marginRight: 10,
+                              marginLeft: -10,
+
+                              marginBottom: 10,
+                              alignSelf: 'center',
+                            }}
+                            source={require('../assets/remind.png')}
+                          />
+                        </TouchableOpacity>
+                        <DateTimePickerModal
+                          isVisible={dateTimePickerVisible}
+                          mode="datetime"
+                          onConfirm={handleConfirmDateTime} //, item.info)}
+                          onCancel={hideDateTimePicker}
+                        />
+                        <TouchableOpacity
+                          name="edit"
+                          size={24}
+                          color="black"
+                          onPress={() => edittodo(item.Id)}>
+                          <Image
+                            style={styles.custom_button}
+                            source={require('../assets/edit.png')}
+                          />
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          name="delete"
+                          size={24}
+                          color="black"
+                          onPress={() => deletetodo(item.Id)}>
+                          <Image
+                            style={styles.custom_button}
+                            source={require('../assets/delete.png')}
+                          />
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          name="share"
+                          size={24}
+                          color="black"
+                          onPress={() => {
+                            share(item.Id);
+                          }}>
+                          <Image
+                            style={styles.custom_button}
+                            source={require('../assets/share.png')}
+                          />
+                        </TouchableOpacity>
+                        <CustomSwitch
+                          selectionMode={1}
+                          roundCorner={true}
+                          option1={'Active'}
+                          option2={'Done'}
+                          onSelectSwitch={onSelectSwitch}
+                          selectionColor={'green'}
+                        />
+                      </View>
+                    ) : (
+                      <View></View>
+                    )
+                  }
                 </View>
               </TouchableOpacity>
             );
@@ -818,7 +868,10 @@ const Home = () => {
                 <Pressable
                   style={[styles.button123, styles.buttonClose]}
                   //onPress={() => setModalVisible(!modalVisible)}>
-                  onPress={addTodo}>
+                  onPress={addTodo}
+                  onPressIn={() => {
+                    catadd;
+                  }}>
                   <Text style={styles.textStyle}>Save It!!</Text>
                 </Pressable>
                 <Pressable
