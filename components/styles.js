@@ -92,7 +92,7 @@ export const styles = StyleSheet.create({
     //marginHorizontal: 50,
     marginBottom: 20,
     borderRadius: 20,
-    height: 150,
+    height: 110,
     width: 370,
   },
 
@@ -355,6 +355,13 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 5,
     //margin: 10,
+  },
+
+  container_cat: {
+    flex: 1,
+  },
+  headerText: {
+    color: 'black',
   },
 });
 

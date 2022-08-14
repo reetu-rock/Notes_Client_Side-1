@@ -293,14 +293,13 @@ const Home = () => {
         },
       )
       .then(res => {
-        setUserID(res.data.data.userdata[0].Id);
+        setUserID(res.data.data.userid);
       });
   }, []);
 
   console.log('Saved user ID ' + UserID);
 
-  //adding todo
-
+  //adding cat
   const catadd = () => {
     if (value == 1) {
       setCatname('General');
@@ -340,6 +339,7 @@ const Home = () => {
   };
   const addTodo = () => {
     setModalVisible(!modalVisible);
+    console.log('CatID = ' + CATID + 'Catname= ' + Catname);
 
     if (Reach) {
       if (!todo) return;
@@ -386,41 +386,6 @@ const Home = () => {
       }
     } else {
       if (!todo) return;
-      // if (value == 1) {
-      //   setCatname('General');
-      //   setCATID('17');
-      //   setColor('#66ff33');
-      // }
-      // if (value == 2) {
-      //   setCatname('home');
-      //   setCATID('1');
-      //   setColor('#3399ff');
-      // }
-      // if (value == 3) {
-      //   setCatname('office');
-      //   setCATID('3');
-      //   setColor('#ff66ff');
-      // }
-      // if (value == 4) {
-      //   setCatname('medical');
-      //   setCATID('4');
-      //   setColor('#666633');
-      // }
-      // if (value == 5) {
-      //   setCatname('Vehicle');
-      //   setCATID('18');
-      //   setColor('#9900ff');
-      // }
-      // if (value == 6) {
-      //   setCatname('Bills');
-      //   setCATID('19');
-      //   setColor('#666699');
-      // }
-      // if (value == 7) {
-      //   setCatname(Category);
-      //   setCATID('false');
-      //   setColor('#993333');
-      // }
       else {
         console.log(value);
         console.log(Catname);
@@ -459,14 +424,11 @@ const Home = () => {
         if (Reach) {
           axios
             .post(
-              'https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/77/ledger_list',
+              'https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/21/ledger_list',
               {
                 data: {
                   userid: UserID,
                   moduleid: 3,
-                  order: 'CDate',
-                  status: 1,
-                  limit: 100,
                 },
               },
             )
@@ -582,7 +544,7 @@ const Home = () => {
               <TouchableOpacity
                 style={styles.todo}
                 onPress={() => edittodo(item.Id, item.catid)}>
-                <View
+                {/* <View
                   style={{
                     paddingHorizontal: 5,
                     flexDirection: 'row',
@@ -599,7 +561,7 @@ const Home = () => {
                       backgroundColor: item.color,
                     }}
                   />
-                </View>
+                </View> */}
                 <View
                   style={{
                     paddingHorizontal: 5,
@@ -869,9 +831,7 @@ const Home = () => {
                   style={[styles.button123, styles.buttonClose]}
                   //onPress={() => setModalVisible(!modalVisible)}>
                   onPress={addTodo}
-                  onPressIn={() => {
-                    catadd;
-                  }}>
+                  onPressIn={catadd}>
                   <Text style={styles.textStyle}>Save It!!</Text>
                 </Pressable>
                 <Pressable
