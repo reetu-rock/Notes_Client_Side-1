@@ -433,7 +433,7 @@ const HomeCategory = () => {
               //console.log(res.data);
               const filled = res.data.data;
               if (filled == false) {
-                Alert.alert(res.data.msg);
+                //Alert.alert(res.data.msg);
               } else {
                 setTodos(res.data.data);
               }

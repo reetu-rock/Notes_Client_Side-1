@@ -42,7 +42,7 @@ const Home = () => {
   const [RemindData, setRemindData] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [Category, setCategory] = useState('');
-  const [value, setValue] = useState(1);
+  const [Value, setValue] = useState(null);
   const [UserID, setUserID] = useState(null);
   const [Color, setColor] = useState('');
   const [Catname, setCatname] = useState('');
@@ -294,71 +294,46 @@ const Home = () => {
     });
   };
 
-  //Adding userId from school wise
-  // useEffect(() => {
-  //   axios
-  //     .post(
-  //       'https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/21/login',
-  //       {
-  //         data: {
-  //           email: Email,
-  //           socialid: Uid,
-  //           fname: '',
-  //           lname: '',
-  //           gender: '',
-  //           profile: '',
-  //           status: '1',
-  //           module_list: '',
-  //           cat_list: '',
-  //           ledger_list: '',
-  //         },
-  //       },
-  //     )
-  //     .then(res => {
-  //       setUserID(res.data.data.userid);
-  //     });
-  // }, []);
-
   console.log('Saved user ID ' + UserID);
 
   //adding cat
-  const catadd = () => {
-    if (value == 1) {
-      setCatname('General');
-      setCATID('49');
-      setColor('#66ff33');
-    }
-    if (value == 2) {
-      setCatname('home');
-      setCATID('1');
-      setColor('#3399ff');
-    }
-    if (value == 3) {
-      setCatname('office');
-      setCATID('3');
-      setColor('#ff66ff');
-    }
-    if (value == 4) {
-      setCatname('medical');
-      setCATID('4');
-      setColor('#666633');
-    }
-    if (value == 5) {
-      setCatname('Vehicle');
-      setCATID('18');
-      setColor('#9900ff');
-    }
-    if (value == 6) {
-      setCatname('Bills');
-      setCATID('19');
-      setColor('#666699');
-    }
-    if (value == 7) {
-      setCatname(Category);
-      setCATID('false');
-      setColor('#993333');
-    }
-  };
+  // const catadd = () => {
+  //   if (value == 1) {
+  //     setCatname('General');
+  //     setCATID('49');
+  //     setColor('#66ff33');
+  //   }
+  //   if (value == 2) {
+  //     setCatname('home');
+  //     setCATID('1');
+  //     setColor('#3399ff');
+  //   }
+  //   if (value == 3) {
+  //     setCatname('office');
+  //     setCATID('3');
+  //     setColor('#ff66ff');
+  //   }
+  //   if (value == 4) {
+  //     setCatname('medical');
+  //     setCATID('4');
+  //     setColor('#666633');
+  //   }
+  //   if (value == 5) {
+  //     setCatname('Vehicle');
+  //     setCATID('18');
+  //     setColor('#9900ff');
+  //   }
+  //   if (value == 6) {
+  //     setCatname('Bills');
+  //     setCATID('19');
+  //     setColor('#666699');
+  //   }
+  //   if (value == 7) {
+  //     setCatname(Category);
+  //     setCATID('false');
+  //     setColor('#993333');
+  //   }
+  // };
   const addTodo = () => {
     setModalVisible(!modalVisible);
     console.log('CatID = ' + CATID + 'Catname= ' + Catname);
@@ -411,10 +386,8 @@ const Home = () => {
     } else {
       if (!todo) return;
       else {
-        console.log(value);
         console.log(Catname);
         console.log(CATID);
-        console.log(Color);
         let data = [
           ...todos,
           {
@@ -464,9 +437,9 @@ const Home = () => {
                 gender: '',
                 profile: '',
                 status: '1',
-                module_list: '',
-                cat_list: '',
-                ledger_list: '',
+                module_list: 'yes',
+                cat_list: 'yes',
+                ledger_list: 'yes',
               },
             },
           )
@@ -495,70 +468,13 @@ const Home = () => {
                   //console.log(res.data);
                   const filled = res.data.data;
                   if (filled == false) {
-                    Alert.alert('nothing in ' + res.data.msg);
+                    //Alert.alert(res.data.msg);
                   } else {
                     setTodos(res.data.data);
                   }
                 });
             }
           });
-        // } else {
-        //   if (Reach) {
-        //     axios
-        //       .post(
-        //         'https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/21/ledger_list',
-        //         {
-        //           data: {
-        //             userid: UserID,
-        //             moduleid: 1,
-        //             catid: '',
-        //             favourite: '',
-        //             find: '',
-        //             order: 'x.CDate DESC',
-        //             limit: 100,
-        //           },
-        //         },
-        //       )
-        //       .then(function (res) {
-        //         //console.log(res.data);
-        //         const filled = res.data.data;
-        //         if (filled == false) {
-        //           Alert.alert('nothing in ' + res.data.msg);
-        //         } else {
-        //           setTodos(res.data.data);
-        //         }
-        //       });
-        //   }
-        // }
-
-        // if (!UserID)
-        //fetching from server
-        // if (Reach) {
-        //   axios
-        //     .post(
-        //       'https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/21/ledger_list',
-        //       {
-        //         data: {
-        //           userid: UserID,
-        //           moduleid: 1,
-        //           catid: '',
-        //           favourite: '',
-        //           find: '',
-        //           order: 'x.CDate DESC',
-        //           limit: 100,
-        //         },
-        //       },
-        //     )
-        //     .then(function (res) {
-        //       //console.log(res.data);
-        //       const filled = res.data.data;
-        //       if (filled == false) {
-        //         Alert.alert('nothing in ' + res.data.msg);
-        //       } else {
-        //         setTodos(res.data.data);
-        //       }
-        //     });
-        // }
       }
     });
 
@@ -587,7 +503,7 @@ const Home = () => {
       }
     });
   };
-
+  console.log('catid saved is ' + CATID);
   return (
     <View style={styles.container}>
       <View style={{flexDirection: 'row'}}>
@@ -831,132 +747,50 @@ const Home = () => {
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
               <Text style={styles.modalText}>Enter a new Todo!! </Text>
-
-              {/* {renderLabel()} */}
-
-              {/* <View>
-                <Text>Choose a category </Text>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    alignContent: 'center',
-                  }}>
-                  <View style={{alignSelf: 'center'}}>
-                    <Text>General</Text>
-                  </View>
-                  <View style={{marginLeft: 50, alignSelf: 'center'}}>
+              <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
+                {todos.map(item => (
+                  <View style={{flexDirection: 'row'}}>
+                    <Text>{item.Cat}</Text>
                     <RadioButton
-                      value="first"
-                      status={value === 1 ? 'checked' : 'unchecked'}
-                      //onPress={() => setChecked('first')}
-                      onPress={() => setValue(1)}
+                      value="check"
+                      status={Value === item.CatId ? 'checked' : 'unchecked'}
+                      onPress={() => setValue(item.CatId)}
+                      onPressIn={() => setCATID(String(item.CatId))}
                     />
+                    <Text>{'\n'}</Text>
                   </View>
-                  <View style={{marginLeft: 50, alignSelf: 'center'}}>
-                    <Text>Home</Text>
-                  </View>
-                  <View style={{marginLeft: 50, alignSelf: 'center'}}>
-                    <RadioButton
-                      value="second"
-                      status={value === 2 ? 'checked' : 'unchecked'}
-                      //onPress={() => setChecked('second')}
-                      onPress={() => setValue(2)}
-                    />
-                  </View>
-                </View>
-
-                <View style={{flexDirection: 'row', alignContent: 'center'}}>
-                  <View style={{alignSelf: 'center'}}>
-                    <Text>Office</Text>
-                  </View>
-                  <View style={{marginLeft: 62, alignSelf: 'center'}}>
-                    <RadioButton
-                      value="third"
-                      status={value === 3 ? 'checked' : 'unchecked'}
-                      //onPress={() => setChecked('third')}
-                      onPress={() => setValue(3)}
-                    />
-                  </View>
-                  <View style={{marginLeft: 50, alignSelf: 'center'}}>
-                    <Text>Medical</Text>
-                  </View>
-                  <View style={{marginLeft: 40, alignSelf: 'center'}}>
-                    <RadioButton
-                      value="fourth"
-                      status={value === 4 ? 'checked' : 'unchecked'}
-                      //onPress={() => setChecked('fourth')}
-                      onPress={() => setValue(4)}
-                    />
-                  </View>
-                </View>
-
-                <View style={{flexDirection: 'row', alignContent: 'center'}}>
-                  <View style={{alignSelf: 'center'}}>
-                    <Text>Vehicle</Text>
-                  </View>
-                  <View style={{marginLeft: 55, alignSelf: 'center'}}>
-                    <RadioButton
-                      value="fifth"
-                      status={value === 5 ? 'checked' : 'unchecked'}
-                      //onPress={() => setChecked('fifth')}
-                      onPress={() => setValue(5)}
-                    />
-                  </View>
-                  <View style={{marginLeft: 50, alignSelf: 'center'}}>
-                    <Text>Bills</Text>
-                  </View>
-                  <View style={{marginLeft: 62, alignSelf: 'center'}}>
-                    <RadioButton
-                      value="sixth"
-                      status={value === 6 ? 'checked' : 'unchecked'}
-                      //onPress={() => setChecked('sixth')}
-                      onPress={() => setValue(6)}
-                    />
-                  </View>
-                </View>
-                <View style={{flexDirection: 'row', alignSelf: 'center'}}>
-                  <View style={{alignSelf: 'center'}}>
-                    <Text>Enter a custom category</Text>
-                  </View>
-                  <View style={{marginLeft: 50, alignSelf: 'center'}}>
-                    <RadioButton
-                      value="seventh"
-                      status={value === 7 ? 'checked' : 'unchecked'}
-                      //onPress={() => setChecked('seventh')}
-                      onPress={() => setValue(7)}
-                    />
-                  </View>
-                </View>
-              </View> */}
-
-              {/* {value == 7 ? (
-                <TextInput
-                  style={styles.inp1}
-                  onChangeText={text => setCategory(text)}
-                  placeholder="Enter a custom category"
+                ))}
+                <Text>Add New Category</Text>
+                <RadioButton
+                  value="check"
+                  status={Value === 1000 ? 'checked' : 'unchecked'}
+                  onPress={() => setValue(1000)}
+                  onPressIn={() => setCATID('false')}
                 />
+              </View>
+
+              {Value == 1000 ? (
+                <View>
+                  <TextInput
+                    style={styles.inp1}
+                    placeholder="Add a new category"
+                    onChangeText={text => setCatname(text)}></TextInput>
+                </View>
               ) : null}
+
               <TextInput
                 style={styles.inp1}
                 onChangeText={text => setTodo(text)}
                 placeholder="Enter the Todo"
               />
-              <Text>{'\n'}</Text> */}
-              <View>
-                {todos.map(item => (
-                  <TouchableOpacity>
-                    <Text>{item.Cat}</Text>
-                    <Text>{'\n'}</Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
 
               <View style={{flexDirection: 'row'}}>
                 <Pressable
                   style={[styles.button123, styles.buttonClose]}
                   //onPress={() => setModalVisible(!modalVisible)}>
                   onPress={addTodo}
-                  onPressIn={catadd}>
+                  //</View>onPressIn={catadd}
+                >
                   <Text style={styles.textStyle}>Save It!!</Text>
                 </Pressable>
                 <Pressable

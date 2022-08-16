@@ -304,7 +304,8 @@ export const styles = StyleSheet.create({
     fontSize: 15,
     borderColor: 'grey',
     marginTop: 10,
-    borderRadius: 50,
+    marginBottom: 10,
+    borderRadius: 10,
     borderWidth: 1,
   },
 
