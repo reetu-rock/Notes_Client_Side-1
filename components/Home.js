@@ -503,6 +503,43 @@ const Home = () => {
       }
     });
   };
+
+  const markFavHandle = ({catId, status }) => {
+    axios.post('https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/21/ledger_favourite', {
+      data: {
+        id:catId,
+        userid:UserID,
+        fav:status 
+       }
+    } ).then(response => {
+      axios
+      .post(
+        'https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/21/ledger_list',
+        {
+          data: {
+            //userid: UserID,
+            userid: UserID,
+            moduleid: 1,
+            catid: '',
+            favourite: '',
+            find: '',
+            order: 'x.CDate DESC',
+            limit: 100,
+          },
+        },
+      )
+      .then(function (res) {
+        //console.log(res.data);
+        const filled = res.data.data;
+        if (filled == false) {
+          //Alert.alert(res.data.msg);
+        } else {
+          setTodos(res.data.data);
+        }
+      });
+       console.log('marked fav')
+    })
+  }
   console.log('catid saved is ' + CATID);
   return (
     <View style={styles.container}>
