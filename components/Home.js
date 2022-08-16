@@ -132,15 +132,14 @@ const Home = () => {
             {
               data: {
                 id: Id,
-                status: 1,
                 userid: UserID,
-                moduleid: 3,
-                catid: catId,
-                name: 'Test',
+                name: '',
+                status: 1,
                 notes: editText,
                 remind: '',
                 reminds: '',
                 remindf: '',
+                status: 1,
               },
             },
           )
@@ -151,8 +150,17 @@ const Home = () => {
                 item.Id === Id
                   ? {
                       Id: item.Id,
-                      Notes: editText,
+                      UserId: UserID,
+                      ModuleId: 1,
                       Cat: item.Cat,
+                      Catid: CATID,
+                      Name: 'Test',
+                      Notes: editText,
+                      Status: 1,
+                      remind: 0,
+                      reminds: '',
+                      remindf: '',
+                      date: Date.now(),
                     }
                   : item,
               ),
@@ -163,8 +171,17 @@ const Home = () => {
           item.Id === Id
             ? {
                 Id: item.Id,
-                info: editText,
+                UserId: UserID,
+                ModuleId: 1,
                 Cat: item.Cat,
+                Catid: CATID,
+                Name: 'Test',
+                Notes: editText,
+                Status: 1,
+                remind: 0,
+                reminds: '',
+                remindf: '',
+                date: Date.now(),
               }
             : item,
         );
@@ -200,7 +217,6 @@ const Home = () => {
             data: {
               id: Id,
               userid: UserID,
-              moduleid: 3,
             },
           },
         )
@@ -279,23 +295,29 @@ const Home = () => {
   };
 
   //Adding userId from school wise
-  useEffect(() => {
-    axios
-      .post(
-        'https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/21/login',
-        {
-          data: {
-            email: Email,
-            fname: '',
-            lname: '',
-            socialid: Uid,
-          },
-        },
-      )
-      .then(res => {
-        setUserID(res.data.data.userid);
-      });
-  }, []);
+  // useEffect(() => {
+  //   axios
+  //     .post(
+  //       'https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/21/login',
+  //       {
+  //         data: {
+  //           email: Email,
+  //           socialid: Uid,
+  //           fname: '',
+  //           lname: '',
+  //           gender: '',
+  //           profile: '',
+  //           status: '1',
+  //           module_list: '',
+  //           cat_list: '',
+  //           ledger_list: '',
+  //         },
+  //       },
+  //     )
+  //     .then(res => {
+  //       setUserID(res.data.data.userid);
+  //     });
+  // }, []);
 
   console.log('Saved user ID ' + UserID);
 
@@ -346,19 +368,20 @@ const Home = () => {
       else {
         axios
           .post(
-            'https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/77/ledger_add',
+            'https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/21/ledger_add',
             {
               data: {
-                status: 1,
                 userid: UserID,
-                moduleid: 3,
+                moduleid: 1,
                 catid: CATID,
-                cat: Catname,
+                catname: Catname,
                 name: 'Test',
                 notes: todo,
                 remind: 0,
                 reminds: '',
                 remindf: '',
+                status: 1,
+                date: Date.now(),
               },
             },
           )
@@ -368,15 +391,16 @@ const Home = () => {
               {
                 Id: response.data.data[0],
                 UserId: UserID,
-                ModuleId: 3,
+                ModuleId: 1,
                 Cat: Catname,
-                CatId: CATID,
+                Catid: CATID,
                 Name: 'Test',
                 Notes: todo,
                 Status: 1,
-                Remind: 1,
-                RemindS: '',
-                RemindF: '',
+                remind: 0,
+                reminds: '',
+                remindf: '',
+                date: Date.now(),
               },
             ]);
           });
@@ -395,11 +419,17 @@ const Home = () => {
           ...todos,
           {
             Id: uuid.v4(),
-            guid: Date.now(),
-            catId: CATID,
-            notes: todo,
-            cat: Catname,
-            color: Color,
+            UserId: UserID,
+            ModuleId: 1,
+            Cat: Catname,
+            Catid: CATID,
+            Name: 'Test',
+            Notes: todo,
+            Status: 1,
+            remind: 0,
+            reminds: '',
+            remindf: '',
+            date: Date.now(),
           },
         ];
         setTodos(data);
@@ -420,33 +450,120 @@ const Home = () => {
         setUid(googleuid);
         setEmail(email);
         setPhotoUrl(ProfilePictiure);
-        //fetching from server
-        if (Reach) {
-          axios
-            .post(
-              'https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/21/ledger_list',
-              {
-                data: {
-                  userid: UserID,
-                  moduleid: 3,
-                },
+
+        // if (!UserID) {
+        axios
+          .post(
+            'https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/21/login',
+            {
+              data: {
+                email: Email,
+                socialid: Uid,
+                fname: '',
+                lname: '',
+                gender: '',
+                profile: '',
+                status: '1',
+                module_list: '',
+                cat_list: '',
+                ledger_list: '',
               },
-            )
-            .then(function (res) {
-              //console.log(res.data);
-              const filled = res.data.data;
-              if (filled == false) {
-                Alert.alert(res.data.msg);
-              } else {
-                setTodos(res.data.data);
-              }
-            });
-        }
+            },
+          )
+          .then(res => {
+            setUserID(res.data.data.userid);
+            let user = res.data.data.userid;
+
+            if (Reach) {
+              axios
+                .post(
+                  'https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/21/ledger_list',
+                  {
+                    data: {
+                      //userid: UserID,
+                      userid: user,
+                      moduleid: 1,
+                      catid: '',
+                      favourite: '',
+                      find: '',
+                      order: 'x.CDate DESC',
+                      limit: 100,
+                    },
+                  },
+                )
+                .then(function (res) {
+                  //console.log(res.data);
+                  const filled = res.data.data;
+                  if (filled == false) {
+                    Alert.alert('nothing in ' + res.data.msg);
+                  } else {
+                    setTodos(res.data.data);
+                  }
+                });
+            }
+          });
+        // } else {
+        //   if (Reach) {
+        //     axios
+        //       .post(
+        //         'https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/21/ledger_list',
+        //         {
+        //           data: {
+        //             userid: UserID,
+        //             moduleid: 1,
+        //             catid: '',
+        //             favourite: '',
+        //             find: '',
+        //             order: 'x.CDate DESC',
+        //             limit: 100,
+        //           },
+        //         },
+        //       )
+        //       .then(function (res) {
+        //         //console.log(res.data);
+        //         const filled = res.data.data;
+        //         if (filled == false) {
+        //           Alert.alert('nothing in ' + res.data.msg);
+        //         } else {
+        //           setTodos(res.data.data);
+        //         }
+        //       });
+        //   }
+        // }
+
+        // if (!UserID)
+        //fetching from server
+        // if (Reach) {
+        //   axios
+        //     .post(
+        //       'https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/21/ledger_list',
+        //       {
+        //         data: {
+        //           userid: UserID,
+        //           moduleid: 1,
+        //           catid: '',
+        //           favourite: '',
+        //           find: '',
+        //           order: 'x.CDate DESC',
+        //           limit: 100,
+        //         },
+        //       },
+        //     )
+        //     .then(function (res) {
+        //       //console.log(res.data);
+        //       const filled = res.data.data;
+        //       if (filled == false) {
+        //         Alert.alert('nothing in ' + res.data.msg);
+        //       } else {
+        //         setTodos(res.data.data);
+        //       }
+        //     });
+        // }
       }
     });
 
     subscribe();
-  }, []);
+  }, [UserID]);
 
   useEffect(() => {
     if (!Reach) {
@@ -717,7 +834,7 @@ const Home = () => {
 
               {/* {renderLabel()} */}
 
-              <View>
+              {/* <View>
                 <Text>Choose a category </Text>
                 <View
                   style={{
@@ -810,9 +927,9 @@ const Home = () => {
                     />
                   </View>
                 </View>
-              </View>
+              </View> */}
 
-              {value == 7 ? (
+              {/* {value == 7 ? (
                 <TextInput
                   style={styles.inp1}
                   onChangeText={text => setCategory(text)}
@@ -824,7 +941,15 @@ const Home = () => {
                 onChangeText={text => setTodo(text)}
                 placeholder="Enter the Todo"
               />
-              <Text>{'\n'}</Text>
+              <Text>{'\n'}</Text> */}
+              <View>
+                {todos.map(item => (
+                  <TouchableOpacity>
+                    <Text>{item.Cat}</Text>
+                    <Text>{'\n'}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
 
               <View style={{flexDirection: 'row'}}>
                 <Pressable

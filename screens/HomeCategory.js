@@ -125,19 +125,17 @@ const HomeCategory = () => {
         axios
           .put(
             'https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/77/ledger_update',
-
             {
               data: {
                 id: Id,
-                status: 1,
                 userid: UserID,
-                moduleid: 3,
-                catid: catId,
-                name: 'Test',
+                name: '',
+                status: 1,
                 notes: editText,
                 remind: '',
                 reminds: '',
                 remindf: '',
+                status: 1,
               },
             },
           )
