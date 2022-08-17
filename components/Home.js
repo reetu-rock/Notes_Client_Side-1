@@ -511,46 +511,7 @@ const Home = () => {
     });
   };
 
-  const markFavHandle = ({catId, status}) => {
-    alert('fav');
-    // axios.post('https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/21/ledger_favourite', {
-    //   data: {
-    //     id:catId,
-    //     userid:UserID,
-    //     fav:status
-    //    }
-    // } ).then(response => {
-    //   axios
-    //   .post(
-    //     'https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/21/ledger_list',
-    //     {
-    //       data: {
-    //         //userid: UserID,
-    //         userid: UserID,
-    //         moduleid: 1,
-    //         catid: '',
-    //         favourite: '',
-    //         find: '',
-    //         order: 'x.CDate DESC',
-    //         limit: 100,
-    //       },
-    //     },
-    //   )
-    //   .then(function (res) {
-    //     //console.log(res.data);
-    //     const filled = res.data.data;
-    //     if (filled == false) {
-    //       //Alert.alert(res.data.msg);
-    //     } else {
-    //       setTodos(res.data.data);
-    //     }
-    //   });
-    //    console.log('marked fav')
-    // })
-  };
-  console.log('catid saved is ' + CATID);
-
-  const favourite = item => {
+  const favourite = (item) => {
     setFav(!Fav);
     axios
       .post(
@@ -844,7 +805,7 @@ const Home = () => {
               <Text style={styles.modalText}>Enter a new Todo!! </Text>
               <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
                 {todos.map(item => (
-                  <View style={{flexDirection: 'row', alignSelf: 'auto'}}>
+                  <View style ={{flexDirection: 'row', alignSelf: "auto"}}>
                     <RadioButton
                       value="check"
                       status={Value === item.CatId ? 'checked' : 'unchecked'}
@@ -863,7 +824,16 @@ const Home = () => {
                     onPress={() => setValue(1000)}
                     onPressIn={() => setCATID('false')}
                   />
-                  <Text style={{marginTop: 7}}>Add New Category</Text>
+                  </View>
+                ))}
+                 <View style ={{flexDirection: 'row', alignSelf: "auto"}}>
+                  <RadioButton
+                  value="check"
+                  status={Value === 1000 ? 'checked' : 'unchecked'}
+                  onPress={() => setValue(1000)}
+                  onPressIn={() => setCATID('false')}
+                />
+                <Text style={{ marginTop: 7 }}>Add New Category</Text>
                 </View>
               </View>
 
