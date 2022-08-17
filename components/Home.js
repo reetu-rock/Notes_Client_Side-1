@@ -559,7 +559,7 @@ const Home = () => {
           data: {
             id: item.Id,
             userid: UserID,
-            fav: !item.isFavourite,
+            fav: !item.Favourite,
           },
         },
       )
@@ -665,9 +665,7 @@ const Home = () => {
                 //onPress={() => edittodo(item.Id, item.catid)}
               >
                 <TouchableOpacity
-                  onPress={() => {
-                    favourite(item);
-                  }}
+                  onPress={() => favourite(item)}
                   style={{
                     flexDirection: 'row',
                     height: 10,
