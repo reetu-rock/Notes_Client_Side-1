@@ -13,20 +13,20 @@ export default function TabViewExample() {
 
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
-    {key: 'first', title: 'Todos'},
-    {key: 'second', title: 'Notes'},
-    {key: 'third', title: 'Docs'},
-    {key: 'fourth', title: 'Reminder'},
-    {key: 'fifth', title: 'test'},
+    {key: 'first', title: 'Notes'},
+    //{key: 'second', title: 'Notes'},
+    //{key: 'third', title: 'Docs'},
+    //{key: 'fourth', title: 'Reminder'},
+    //{key: 'fifth', title: 'test'},
     //{key: 'fifth', title: 'Maps'},
   ]);
 
   const renderScene = SceneMap({
-    first: Home,
-    second: Notes,
-    third: Document,
-    fourth: RemindCalendar,
-    fifth: HomeCategory,
+    first: HomeCategory,
+    //second: Notes,
+    //third: Document,
+    //fourth: RemindCalendar,
+    //fifth: HomeCategory,
     //fifth: Maps,
   });
 

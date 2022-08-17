@@ -33,27 +33,28 @@ const Home = () => {
   const [Reach, setReach] = useState(false);
   const [Uid, setUid] = useState('');
   const [Email, setEmail] = useState('');
-  const [note, setnote] = useState('');
-  const [notes, setnotes] = useState([]);
+  const [todo, setTodo] = useState('');
+  const [todos, setTodos] = useState([]);
   const [EditID, setEditID] = useState('');
   const [editText, setEditText] = useState('');
   const [edit, setEdit] = useState(true);
   const [dateTimePickerVisible, setDateTimePickerVisible] = useState(false);
   const [RemindData, setRemindData] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
-  const [Category, setCategory] = useState('');
-  const [value, setValue] = useState(1);
+  const [Value, setValue] = useState(null);
   const [UserID, setUserID] = useState(null);
-  const [Color, setColor] = useState('');
   const [Catname, setCatname] = useState('');
   const [CATID, setCATID] = useState('');
   const [PhotoUrl, setPhotoUrl] = useState('');
   const [modalVisible1, setModalVisible1] = useState(false);
+  const [RenderState, setRenderState] = useState(null);
+  const [Tray, setTray] = useState(false);
+  const [Fav, setFav] = useState(0);
 
-  const storeData = async notes => {
+  const storeData = async todos => {
     try {
-      const jsonValue = JSON.stringify(notes);
-      await AsyncStorage.setItem('notes', jsonValue);
+      const jsonValue = JSON.stringify(todos);
+      await AsyncStorage.setItem('todos', jsonValue);
     } catch (e) {
       // saving error
     }
@@ -61,27 +62,27 @@ const Home = () => {
 
   const getData = async () => {
     try {
-      const jsonValue = await AsyncStorage.getItem('notes');
-      return jsonValue != null ? setnotes(JSON.parse(jsonValue)) : null;
+      const jsonValue = await AsyncStorage.getItem('todos');
+      return jsonValue != null ? setTodos(JSON.parse(jsonValue)) : null;
     } catch (e) {
       // error reading value
     }
   };
 
-  const removeData = async notes => {
+  const removeData = async todos => {
     try {
-      const jsonValue = JSON.stringify(notes);
-      await AsyncStorage.setItem('notes', jsonValue);
+      const jsonValue = JSON.stringify(todos);
+      await AsyncStorage.setItem('todos', jsonValue);
     } catch (e) {
       // saving error
     }
     Alert.alert('Item Removed');
   };
 
-  const editData = async notes => {
+  const editData = async todos => {
     try {
-      const jsonValue = JSON.stringify(notes);
-      await AsyncStorage.setItem('notes', jsonValue);
+      const jsonValue = JSON.stringify(todos);
+      await AsyncStorage.setItem('todos', jsonValue);
     } catch (e) {
       // saving error
     }
@@ -110,9 +111,9 @@ const Home = () => {
       .catch(e => Alert.alert('Error', e.message));
   };
 
-  //edit note
-  const editnote = (Id, catId) => {
-    notes.map(item => {
+  //edit todo
+  const edittodo = (Id, catId) => {
+    todos.map(item => {
       if (edit && item.Id === Id) {
         setEdit(!edit);
         setEditText(item.Notes);
@@ -130,44 +131,61 @@ const Home = () => {
             {
               data: {
                 id: Id,
-                status: 1,
                 userid: UserID,
-                moduleid: 1,
-                catid: catId,
-                name: 'Test',
+                name: '',
+                status: 1,
                 notes: editText,
                 remind: '',
                 reminds: '',
                 remindf: '',
+                status: 1,
               },
             },
           )
 
           .then(res => {
-            setnotes(
-              notes.map(item =>
+            setTodos(
+              todos.map(item =>
                 item.Id === Id
                   ? {
                       Id: item.Id,
-                      Notes: editText,
+                      UserId: UserID,
+                      ModuleId: 1,
                       Cat: item.Cat,
+                      Catid: CATID,
+                      Name: 'Test',
+                      Notes: editText,
+                      Status: 1,
+                      remind: 0,
+                      reminds: '',
+                      remindf: '',
+                      date: Date.now(),
                     }
                   : item,
               ),
             );
           });
       } else {
-        let data2 = notes.map(item =>
+        let data2 = todos.map(item =>
           item.Id === Id
             ? {
                 Id: item.Id,
-                info: editText,
+                UserId: UserID,
+                ModuleId: 1,
                 Cat: item.Cat,
+                Catid: CATID,
+                Name: 'Test',
+                Notes: editText,
+                Status: 1,
+                remind: 0,
+                reminds: '',
+                remindf: '',
+                date: Date.now(),
               }
             : item,
         );
         setEditText('');
-        setnotes(data2);
+        setTodos(data2);
         editData(data2);
       }
       setEdit(true);
@@ -175,7 +193,7 @@ const Home = () => {
   };
 
   const GoBack = id => {
-    let data2 = notes.map(item =>
+    let data2 = todos.map(item =>
       item.id === id
         ? {
             id: item.id,
@@ -184,12 +202,12 @@ const Home = () => {
           }
         : item,
     );
-    setnotes(data2);
+    setTodos(data2);
     setEdit(true);
   };
 
-  //delete note
-  const deletenote = Id => {
+  //delete todo
+  const deletetodo = Id => {
     if (Reach) {
       axios
         .post(
@@ -198,25 +216,24 @@ const Home = () => {
             data: {
               id: Id,
               userid: UserID,
-              moduleid: 1,
             },
           },
         )
         .then(res => {
-          setnotes(notes.filter(item => item.Id != Id));
+          setTodos(todos.filter(item => item.Id != Id));
           Alert.alert('Item Removed');
           console.log(res.data);
         });
     } else {
-      let data1 = notes.filter(item => item.Id !== Id);
-      setnotes(notes.filter(item => item.Id !== Id));
+      let data1 = todos.filter(item => item.Id !== Id);
+      setTodos(todos.filter(item => item.Id !== Id));
       removeData(data1);
     }
   };
 
-  //share note
+  //share todo
   const share = Id => {
-    notes.map(item => {
+    todos.map(item => {
       if (item.Id === Id) {
         //console.log(item.Id);
         console.log(Id);
@@ -276,167 +293,131 @@ const Home = () => {
     });
   };
 
-  //Adding userId from school wise
-
-  useEffect(() => {
-    axios
-      .post(
-        'https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/21/login',
-        {
-          data: {
-            email: Email,
-            fname: '',
-            lname: '',
-            socialid: Uid,
-          },
-        },
-      )
-      .then(res => {
-        setUserID(res.data.data.userdata[0].Id);
-      });
-  }, []);
-
   console.log('Saved user ID ' + UserID);
 
-  //adding note
-  const addnote = () => {
+  const addTodo = () => {
     setModalVisible(!modalVisible);
+    console.log('CatID = ' + CATID + 'Catname= ' + Catname);
 
     if (Reach) {
-      if (!note) return;
+      if (!todo) return;
       else {
-        if (value == 1) {
-          setCatname('General');
-          setCATID('17');
-          setColor('#66ff33');
-        }
-        if (value == 2) {
-          setCatname('home');
-          setCATID('1');
-          setColor('#3399ff');
-        }
-        if (value == 3) {
-          setCatname('office');
-          setCATID('3');
-          setColor('#ff66ff');
-        }
-        if (value == 4) {
-          setCatname('medical');
-          setCATID('4');
-          setColor('#666633');
-        }
-        if (value == 5) {
-          setCatname('Vehicle');
-          setCATID('18');
-          setColor('#9900ff');
-        }
-        if (value == 6) {
-          setCatname('Bills');
-          setCATID('19');
-          setColor('#666699');
-        }
-        if (value == 7) {
-          setCatname(Category);
-          setCATID('false');
-          setColor('#993333');
-        }
-        axios
-          .post(
-            'https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/77/ledger_add',
-            {
-              data: {
-                status: 1,
-                userid: UserID,
-                moduleid: 1,
-                catid: CATID,
-                cat: Catname,
-                name: 'Test',
-                notes: note,
-                remind: 0,
-                reminds: '',
-                remindf: '',
-              },
-            },
-          )
-          .then(response => {
-            setnotes([
-              ...notes,
+        if (CATID != 'false') {
+          axios
+            .post(
+              'https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/21/ledger_add',
               {
-                Id: response.data.data[0],
-                UserId: UserID,
-                ModuleId: 1,
-                Cat: Catname,
-                CatId: CATID,
-                Name: 'Test',
-                Notes: note,
-                Status: 1,
-                Remind: 1,
-                RemindS: '',
-                RemindF: '',
+                data: {
+                  userid: UserID,
+                  moduleid: 1,
+                  catid: CATID,
+                  catname: Catname,
+                  name: 'Test',
+                  notes: todo,
+                  remind: 0,
+                  reminds: '',
+                  remindf: '',
+                  status: 1,
+                  date: Date.now(),
+                },
               },
-            ]);
-          });
+            )
+            .then(response => {
+              setTodos([
+                ...todos,
+                {
+                  Id: response.data.data[0],
+                  UserId: UserID,
+                  ModuleId: 1,
+                  Cat: '',
+                  CatId: CATID,
+                  Name: 'Test',
+                  Notes: todo,
+                  Status: 1,
+                  remind: 0,
+                  reminds: '',
+                  remindf: '',
+                  date: Date.now(),
+                },
+              ]);
+            });
 
-        setnote('');
-        setCategory('');
-        setValue(null);
+          setTodo('');
+          //setCategory('');
+        } else {
+          // for catid false
+          axios
+            .post(
+              'https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/21/ledger_add',
+              {
+                data: {
+                  userid: UserID,
+                  moduleid: 1,
+                  catid: CATID,
+                  cat: Catname,
+                  catcolor: '#FF0000',
+                  caticon: '',
+                  name: 'Test',
+                  notess: todo,
+                  remind: 0,
+                  reminds: '',
+                  remindf: '',
+                  status: 1,
+                  date: Date.now(),
+                },
+              },
+            )
+            .then(response => {
+              setTodos([
+                ...todos,
+                {
+                  Id: response.data.data[0],
+                  UserId: UserID,
+                  ModuleId: 1,
+                  Cat: Catname,
+                  CatId: CATID,
+                  Name: 'Test',
+                  Notes: todo,
+                  Status: 1,
+                  remind: 0,
+                  reminds: '',
+                  remindf: '',
+                  date: Date.now(),
+                },
+              ]);
+            });
+
+          setTodo('');
+          //setCategory('');
+        }
       }
     } else {
-      if (!note) return;
-      if (value == 1) {
-        setCatname('General');
-        setCATID('17');
-        setColor('#66ff33');
+      if (!todo) return;
+      else {
+        console.log(Catname);
+        console.log(CATID);
+        let data = [
+          ...todos,
+          {
+            Id: uuid.v4(),
+            UserId: UserID,
+            ModuleId: 1,
+            Cat: Catname,
+            Catid: CATID,
+            Name: 'Test',
+            Notes: todo,
+            Status: 1,
+            remind: 0,
+            reminds: '',
+            remindf: '',
+            date: Date.now(),
+          },
+        ];
+        setTodos(data);
+        setTodo('');
+        //setCategory('');
+        storeData(data);
       }
-      if (value == 2) {
-        setCatname('home');
-        setCATID('1');
-        setColor('#3399ff');
-      }
-      if (value == 3) {
-        setCatname('office');
-        setCATID('3');
-        setColor('#ff66ff');
-      }
-      if (value == 4) {
-        setCatname('medical');
-        setCATID('4');
-        setColor('#666633');
-      }
-      if (value == 5) {
-        setCatname('Vehicle');
-        setCATID('18');
-        setColor('#9900ff');
-      }
-      if (value == 6) {
-        setCatname('Bills');
-        setCATID('19');
-        setColor('#666699');
-      }
-      if (value == 7) {
-        setCatname(Category);
-        setCATID('false');
-        setColor('#993333');
-      }
-      console.log(value);
-      console.log(Catname);
-      console.log(CATID);
-      console.log(Color);
-      let data = [
-        ...notes,
-        {
-          Id: uuid.v4(),
-          guid: Date.now(),
-          catId: CATID,
-          notes: note,
-          cat: Catname,
-          color: Color,
-        },
-      ];
-      setnotes(data);
-      setnote('');
-      setCategory('');
-      storeData(data);
     }
     setEdit(true);
   };
@@ -450,36 +431,63 @@ const Home = () => {
         setUid(googleuid);
         setEmail(email);
         setPhotoUrl(ProfilePictiure);
-        //fetching from server
-        if (Reach) {
-          axios
-            .post(
-              'https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/77/ledger_list',
-              {
-                data: {
-                  userid: UserID,
-                  moduleid: 1,
-                  order: 'CDate',
-                  status: 1,
-                  limit: 100,
-                },
+
+        // if (!UserID) {
+        axios
+          .post(
+            'https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/21/login',
+            {
+              data: {
+                email: Email,
+                socialid: Uid,
+                fname: '',
+                lname: '',
+                gender: '',
+                profile: '',
+                status: '1',
+                module_list: 'yes',
+                cat_list: 'yes',
+                ledger_list: 'yes',
               },
-            )
-            .then(function (res) {
-              //console.log(res.data);
-              const filled = res.data.data;
-              if (filled == false) {
-                //Alert.alert(res.data.msg);
-              } else {
-                setnotes(res.data.data);
-              }
-            });
-        }
+            },
+          )
+          .then(res => {
+            setUserID(res.data.data.userid);
+            let user = res.data.data.userid;
+
+            if (Reach) {
+              axios
+                .post(
+                  'https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/21/ledger_list',
+                  {
+                    data: {
+                      //userid: UserID,
+                      userid: user,
+                      moduleid: 1,
+                      catid: '',
+                      favourite: '',
+                      find: '',
+                      order: 'x.CDate DESC',
+                      limit: 100,
+                    },
+                  },
+                )
+                .then(function (res) {
+                  //console.log(res.data);
+                  const filled = res.data.data;
+                  if (filled == false) {
+                    //Alert.alert(res.data.msg);
+                  } else {
+                    setTodos(res.data.data);
+                  }
+                });
+            }
+          });
       }
     });
 
     subscribe();
-  }, []);
+  }, [UserID]);
 
   useEffect(() => {
     if (!Reach) {
@@ -491,10 +499,69 @@ const Home = () => {
     //alert('Selected index: ' + index);
   };
 
+  const RenderTray = () => {
+    setTray(!Tray);
+  };
+
+  const Render = Id => {
+    todos.map(item => {
+      if (item.Id === Id && Tray) {
+        console.log(Id);
+        setRenderState(Id);
+      }
+    });
+  };
+  console.log('catid saved is ' + CATID);
+
+  const favourite = Id => {
+    setFav(!Fav);
+    console.log('fav value is ' + Fav);
+
+    axios
+      .post(
+        'https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/21/ledger_favourite',
+        {
+          data: {
+            id: Id,
+            userid: UserID,
+            fav: Fav,
+          },
+        },
+      )
+      .then(response => {
+        axios
+          .post(
+            'https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/21/ledger_list',
+            {
+              data: {
+                //userid: UserID,
+                userid: UserID,
+                moduleid: 1,
+                catid: '',
+                favourite: '',
+                find: '',
+                order: 'x.CDate DESC',
+                limit: 100,
+              },
+            },
+          )
+          .then(function (res) {
+            //console.log(res.data);
+            const filled = res.data.data;
+            if (filled == false) {
+              //Alert.alert(res.data.msg);
+            } else {
+              setTodos(res.data.data);
+            }
+          });
+        console.log('marked fav');
+      });
+  };
+
   return (
     <View style={styles.container}>
       <View style={{flexDirection: 'row'}}>
-        <Text style={styles.heading}>notes</Text>
+        <Text style={styles.heading}>Todos</Text>
 
         <Modal
           animationType="slide"
@@ -558,116 +625,170 @@ const Home = () => {
       </View>
 
       <ScrollView style={styles.scrollView}>
-        {notes.map(item => {
+        {todos.map(item => {
           if (edit) {
             return (
-              <TouchableOpacity
-                style={styles.note}
-                onPress={() => editnote(item.Id, item.catid)}>
-                <View
+              <View
+                style={styles.todo}
+                //onPress={() => edittodo(item.Id, item.catid)}
+              >
+                <TouchableOpacity
+                  onPress={() => {
+                    favourite(item.Id);
+                  }}
                   style={{
-                    paddingHorizontal: 5,
                     flexDirection: 'row',
-                    height: 40,
+                    height: 10,
+                    marginTop: 20,
                     width: 350,
                   }}>
-                  <Text style={styles.txt321}>Category: {item.Cat}</Text>
-                  <View
-                    style={{
-                      marginTop: 0,
-                      marginLeft: 5,
-                      width: 25,
-                      height: 25,
-                      backgroundColor: item.color,
-                    }}
-                  />
-                </View>
+                  {Fav == 0 ? (
+                    <Image
+                      style={{
+                        marginRight: 10,
+                        marginTop: 0,
+                        marginLeft: 315,
+                        width: 35,
+                        height: 35,
+                        marginBottom: 20,
+                        alignSelf: 'center',
+                      }}
+                      source={require('../assets/notfav.png')}
+                    />
+                  ) : (
+                    <Image
+                      style={{
+                        marginRight: 10,
+                        marginTop: 0,
+                        marginLeft: 315,
+                        width: 35,
+                        height: 35,
+                        marginBottom: 20,
+                        alignSelf: 'center',
+                      }}
+                      source={require('../assets/fav.png')}
+                    />
+                  )}
+                </TouchableOpacity>
+                {/* </View> */}
                 <View
                   style={{
                     paddingHorizontal: 5,
                     //flexDirection: 'row',
-                    height: 40,
+                    height: 50,
                     width: 350,
                   }}>
                   <Text style={styles.txt}>{item.Notes}</Text>
                 </View>
-                <View style={styles.note1}>
-                  {/* <TouchableOpacity
-                    name="Reminder"
+                {/* Button Started */}
+                <View style={styles.tray}>
+                  <TouchableOpacity
+                    name="Button tray"
                     size={24}
                     color="black"
-                    onPress={showDatePicker}
+                    onPress={() => {
+                      Render(item.Id);
+                    }}
                     onPressIn={() => {
-                      Picker(item.info);
+                      RenderTray();
                     }}>
                     <Image
                       style={{
                         height: 35,
-                        //borderRadius: 50,
                         width: 35,
-                        //margin: 2,
-                        marginRight: 10,
-                        marginLeft: -10,
-
-                        marginBottom: 10,
+                        marginLeft: -15,
+                        //marginTop: 15,
                         alignSelf: 'center',
                       }}
-                      source={require('../assets/remind.png')}
-                    />
-                  </TouchableOpacity> */}
-                  <DateTimePickerModal
-                    isVisible={dateTimePickerVisible}
-                    mode="datetime"
-                    onConfirm={handleConfirmDateTime} //, item.info)}
-                    onCancel={hideDateTimePicker}
-                  />
-                  <TouchableOpacity
-                    name="edit"
-                    size={24}
-                    color="black"
-                    onPress={() => editnote(item.Id)}>
-                    <Image
-                      style={styles.custom_button}
-                      source={require('../assets/edit.png')}
+                      source={require('../assets/options.png')}
                     />
                   </TouchableOpacity>
-                  <TouchableOpacity
-                    name="delete"
-                    size={24}
-                    color="black"
-                    onPress={() => deletenote(item.Id)}>
-                    <Image
-                      style={styles.custom_button}
-                      source={require('../assets/delete.png')}
-                    />
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    name="share"
-                    size={24}
-                    color="black"
-                    onPress={() => {
-                      share(item.Id);
-                    }}>
-                    <Image
-                      style={styles.custom_button}
-                      source={require('../assets/share.png')}
-                    />
-                  </TouchableOpacity>
-                  {/* <CustomSwitch
-                    selectionMode={1}
-                    roundCorner={true}
-                    option1={'Active'}
-                    option2={'Done'}
-                    onSelectSwitch={onSelectSwitch}
-                    selectionColor={'green'}
-                  /> */}
+
+                  {
+                    //Render ? <View></View> : <View></View>}
+                    item.Id == RenderState && Tray ? (
+                      <View style={styles.todo1}>
+                        <TouchableOpacity
+                          name="Reminder"
+                          size={24}
+                          color="black"
+                          onPress={showDatePicker}
+                          onPressIn={() => {
+                            Picker(item.info);
+                          }}>
+                          <Image
+                            style={{
+                              height: 35,
+                              //borderRadius: 50,
+                              width: 35,
+                              //margin: 2,
+                              marginRight: 10,
+                              marginLeft: -10,
+
+                              marginBottom: 10,
+                              alignSelf: 'center',
+                            }}
+                            source={require('../assets/remind.png')}
+                          />
+                        </TouchableOpacity>
+                        <DateTimePickerModal
+                          isVisible={dateTimePickerVisible}
+                          mode="datetime"
+                          onConfirm={handleConfirmDateTime} //, item.info)}
+                          onCancel={hideDateTimePicker}
+                        />
+                        <TouchableOpacity
+                          name="edit"
+                          size={24}
+                          color="black"
+                          onPress={() => edittodo(item.Id)}>
+                          <Image
+                            style={styles.custom_button}
+                            source={require('../assets/edit.png')}
+                          />
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          name="delete"
+                          size={24}
+                          color="black"
+                          onPress={() => deletetodo(item.Id)}>
+                          <Image
+                            style={styles.custom_button}
+                            source={require('../assets/delete.png')}
+                          />
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          name="share"
+                          size={24}
+                          color="black"
+                          onPress={() => {
+                            share(item.Id);
+                          }}>
+                          <Image
+                            style={styles.custom_button}
+                            source={require('../assets/share.png')}
+                          />
+                        </TouchableOpacity>
+                        <CustomSwitch
+                          selectionMode={1}
+                          roundCorner={true}
+                          option1={'Active'}
+                          option2={'Done'}
+                          onSelectSwitch={onSelectSwitch}
+                          selectionColor={'green'}
+                        />
+                      </View>
+                    ) : (
+                      <View></View>
+                    )
+                  }
                 </View>
-              </TouchableOpacity>
+              </View>
             );
           }
           if (!edit && item.Id === EditID) {
             return (
-              <View style={styles.note321}>
+              <View style={styles.todo321}>
                 <Text style={styles.txt321}>Category: {item.Cat}</Text>
                 <TextInput
                   style={styles.inp321}
@@ -676,12 +797,12 @@ const Home = () => {
                   numberOfLines={5}
                   onChangeText={text => setEditText(text)}
                 />
-                <View style={styles.note1}>
+                <View style={styles.todo1}>
                   <TouchableOpacity
                     name="edit"
                     size={24}
                     color="black"
-                    onPress={() => editnote(item.Id)}>
+                    onPress={() => edittodo(item.Id)}>
                     <Text style={styles.button_txt2}>EditText</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
@@ -701,124 +822,51 @@ const Home = () => {
         <Modal animationType="slide" transparent={true} visible={modalVisible}>
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
-              <Text style={styles.modalText}>Enter a new note!! </Text>
-
-              {/* {renderLabel()} */}
-
-              <View>
-                <Text>Choose a category </Text>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    alignContent: 'center',
-                  }}>
-                  <View style={{alignSelf: 'center'}}>
-                    <Text>General</Text>
-                  </View>
-                  <View style={{marginLeft: 50, alignSelf: 'center'}}>
+              <Text style={styles.modalText}>Enter a new Todo!! </Text>
+              <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
+                {todos.map(item => (
+                  <View style={{flexDirection: 'row'}}>
+                    <Text>{item.Cat}</Text>
                     <RadioButton
-                      value="first"
-                      status={value === 1 ? 'checked' : 'unchecked'}
-                      //onPress={() => setChecked('first')}
-                      onPress={() => setValue(1)}
+                      value="check"
+                      status={Value === item.CatId ? 'checked' : 'unchecked'}
+                      onPress={() => setValue(item.CatId)}
+                      onPressIn={() => setCATID(String(item.CatId))}
                     />
+                    <Text>{'\n'}</Text>
                   </View>
-                  <View style={{marginLeft: 50, alignSelf: 'center'}}>
-                    <Text>Home</Text>
-                  </View>
-                  <View style={{marginLeft: 50, alignSelf: 'center'}}>
-                    <RadioButton
-                      value="second"
-                      status={value === 2 ? 'checked' : 'unchecked'}
-                      //onPress={() => setChecked('second')}
-                      onPress={() => setValue(2)}
-                    />
-                  </View>
-                </View>
-
-                <View style={{flexDirection: 'row', alignContent: 'center'}}>
-                  <View style={{alignSelf: 'center'}}>
-                    <Text>Office</Text>
-                  </View>
-                  <View style={{marginLeft: 62, alignSelf: 'center'}}>
-                    <RadioButton
-                      value="third"
-                      status={value === 3 ? 'checked' : 'unchecked'}
-                      //onPress={() => setChecked('third')}
-                      onPress={() => setValue(3)}
-                    />
-                  </View>
-                  <View style={{marginLeft: 50, alignSelf: 'center'}}>
-                    <Text>Medical</Text>
-                  </View>
-                  <View style={{marginLeft: 40, alignSelf: 'center'}}>
-                    <RadioButton
-                      value="fourth"
-                      status={value === 4 ? 'checked' : 'unchecked'}
-                      //onPress={() => setChecked('fourth')}
-                      onPress={() => setValue(4)}
-                    />
-                  </View>
-                </View>
-
-                <View style={{flexDirection: 'row', alignContent: 'center'}}>
-                  <View style={{alignSelf: 'center'}}>
-                    <Text>Vehicle</Text>
-                  </View>
-                  <View style={{marginLeft: 55, alignSelf: 'center'}}>
-                    <RadioButton
-                      value="fifth"
-                      status={value === 5 ? 'checked' : 'unchecked'}
-                      //onPress={() => setChecked('fifth')}
-                      onPress={() => setValue(5)}
-                    />
-                  </View>
-                  <View style={{marginLeft: 50, alignSelf: 'center'}}>
-                    <Text>Bills</Text>
-                  </View>
-                  <View style={{marginLeft: 62, alignSelf: 'center'}}>
-                    <RadioButton
-                      value="sixth"
-                      status={value === 6 ? 'checked' : 'unchecked'}
-                      //onPress={() => setChecked('sixth')}
-                      onPress={() => setValue(6)}
-                    />
-                  </View>
-                </View>
-                <View style={{flexDirection: 'row', alignSelf: 'center'}}>
-                  <View style={{alignSelf: 'center'}}>
-                    <Text>Enter a custom category</Text>
-                  </View>
-                  <View style={{marginLeft: 50, alignSelf: 'center'}}>
-                    <RadioButton
-                      value="seventh"
-                      status={value === 7 ? 'checked' : 'unchecked'}
-                      //onPress={() => setChecked('seventh')}
-                      onPress={() => setValue(7)}
-                    />
-                  </View>
-                </View>
+                ))}
+                <Text>Add New Category</Text>
+                <RadioButton
+                  value="check"
+                  status={Value === 1000 ? 'checked' : 'unchecked'}
+                  onPress={() => setValue(1000)}
+                  onPressIn={() => setCATID('false')}
+                />
               </View>
 
-              {value == 7 ? (
-                <TextInput
-                  style={styles.inp1}
-                  onChangeText={text => setCategory(text)}
-                  placeholder="Enter a custom category"
-                />
+              {Value == 1000 ? (
+                <View>
+                  <TextInput
+                    style={styles.inp1}
+                    placeholder="Add a new category"
+                    onChangeText={text => setCatname(text)}></TextInput>
+                </View>
               ) : null}
+
               <TextInput
                 style={styles.inp1}
-                onChangeText={text => setnote(text)}
-                placeholder="Enter the note"
+                onChangeText={text => setTodo(text)}
+                placeholder="Enter the Todo"
               />
-              <Text>{'\n'}</Text>
 
               <View style={{flexDirection: 'row'}}>
                 <Pressable
                   style={[styles.button123, styles.buttonClose]}
                   //onPress={() => setModalVisible(!modalVisible)}>
-                  onPress={addnote}>
+                  onPress={addTodo}
+                  //</View>onPressIn={catadd}
+                >
                   <Text style={styles.textStyle}>Save It!!</Text>
                 </Pressable>
                 <Pressable

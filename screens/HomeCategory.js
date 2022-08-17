@@ -9,6 +9,7 @@ import {
   TextInput,
   Image,
   Pressable,
+  Keyboard,
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import DynamicTabView from 'react-native-dynamic-tab-view';
@@ -25,6 +26,9 @@ import {RadioButton} from 'react-native-paper';
 import CustomSwitch from '../components/CustomSwitch';
 import {Button} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
+import SearchBar from 'react-native-dynamic-search-bar';
+import HighlightText from '@sanar/react-native-highlight-text';
+
 const HomeCategory = () => {
   const navigation = useNavigation();
   const [Uid, setUid] = useState('');
@@ -46,7 +50,8 @@ const HomeCategory = () => {
   const [modalVisible1, setModalVisible1] = useState(false);
   const [RenderState, setRenderState] = useState(null);
   const [Tray, setTray] = useState(false);
-  const [Fav, setFav] = useState(0);
+  const [Fav, setFav] = useState(false);
+  const [Search, setSearch] = useState('');
 
   const storeData = async todos => {
     try {
@@ -109,7 +114,7 @@ const HomeCategory = () => {
   };
 
   //edit todo
-  const edittodo = (Id, catId) => {
+  const edittodo = Id => {
     todos.map(item => {
       if (edit && item.Id === Id) {
         setEdit(!edit);
@@ -148,7 +153,7 @@ const HomeCategory = () => {
                       UserId: UserID,
                       ModuleId: 1,
                       Cat: item.Cat,
-                      Catid: CATID,
+                      CatId: CATID,
                       Name: 'Test',
                       Notes: editText,
                       Status: 1,
@@ -169,7 +174,7 @@ const HomeCategory = () => {
                 UserId: UserID,
                 ModuleId: 1,
                 Cat: item.Cat,
-                Catid: CATID,
+                CatId: CATID,
                 Name: 'Test',
                 Notes: editText,
                 Status: 1,
@@ -294,7 +299,7 @@ const HomeCategory = () => {
 
   const addTodo = () => {
     setModalVisible(!modalVisible);
-    console.log('CatID = ' + CATID + 'Catname= ' + Catname);
+    console.log('the todo is' + todo);
 
     if (Reach) {
       if (!todo) return;
@@ -308,7 +313,7 @@ const HomeCategory = () => {
                   userid: UserID,
                   moduleid: 1,
                   catid: CATID,
-                  catname: Catname,
+                  cat: Catname,
                   name: 'Test',
                   notes: todo,
                   remind: 0,
@@ -327,7 +332,7 @@ const HomeCategory = () => {
                   UserId: UserID,
                   ModuleId: 1,
                   Cat: '',
-                  Catid: CATID,
+                  CatId: CATID,
                   Name: 'Test',
                   Notes: todo,
                   Status: 1,
@@ -372,7 +377,7 @@ const HomeCategory = () => {
                   UserId: UserID,
                   ModuleId: 1,
                   Cat: Catname,
-                  Catid: CATID,
+                  CatId: CATID,
                   Name: 'Test',
                   Notes: todo,
                   Status: 1,
@@ -400,7 +405,7 @@ const HomeCategory = () => {
             UserId: UserID,
             ModuleId: 1,
             Cat: Catname,
-            Catid: CATID,
+            CatId: CATID,
             Name: 'Test',
             Notes: todo,
             Status: 1,
@@ -509,18 +514,16 @@ const HomeCategory = () => {
     });
   };
 
-  const favourite = Id => {
+  const favourite = item => {
     setFav(!Fav);
-    console.log('fav value is ' + Fav);
-
     axios
       .post(
         'https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/21/ledger_favourite',
         {
           data: {
-            id: Id,
+            id: item.Id,
             userid: UserID,
-            fav: Fav,
+            fav: !item.Favourite,
           },
         },
       )
@@ -533,9 +536,6 @@ const HomeCategory = () => {
                 //userid: UserID,
                 userid: UserID,
                 moduleid: 1,
-                catid: '',
-                favourite: '',
-                find: '',
                 order: 'x.CDate DESC',
                 limit: 100,
               },
@@ -557,10 +557,16 @@ const HomeCategory = () => {
   let CatNames = [];
 
   todos.map(item => {
-    CatNames.push({Id: item.Id, title: item.Cat, notes: item.Notes});
+    CatNames.push({
+      Id: item.Id,
+      title: item.Cat,
+      notes: item.Notes,
+      CatId: item.CatId,
+      Favourite: item.Favourite,
+    });
   });
 
-  console.log(CatNames);
+  console.log('These are Catnames ' + CatNames);
 
   let result = [];
   let recents = [];
@@ -572,22 +578,46 @@ const HomeCategory = () => {
       const index2 = recents.findIndex(item => item.title === 'Recents');
       const index3 = favorites.findIndex(item => item.title === 'Favorites');
       if (index1 < 0) {
-        result.push({title: i.title, data: [{Id: i.Id, notes: i.notes}]});
-      } else {
-        result[index1].data.push({Id: i.Id, notes: i.notes});
-      }
-      if (index2 < 0) {
-        recents.push({title: 'Recents', data: [{Id: i.Id, notes: i.notes}]});
-      } else {
-        recents[index2].data.push({Id: i.Id, notes: i.notes});
-      }
-      if (index3 < 0) {
-        favorites.push({
-          title: 'Favorites',
-          data: [{Id: i.Id, notes: i.notes}],
+        result.push({
+          title: i.title,
+          data: [{Id: i.Id, notes: i.notes, Favourite: i.Favourite}],
+          CatId: i.CatId,
         });
       } else {
-        favorites[index3].data.push({Id: i.Id, notes: i.notes});
+        result[index1].data.push({
+          Id: i.Id,
+          notes: i.notes,
+          Favourite: i.Favourite,
+        });
+      }
+      if (index2 < 0) {
+        recents.push({
+          title: 'Recents',
+          data: [{Id: i.Id, notes: i.notes, Favourite: i.Favourite}],
+          CatId: i.CatId,
+        });
+      } else {
+        recents[index2].data.push({
+          Id: i.Id,
+          notes: i.notes,
+          Favourite: i.Favourite,
+        });
+      }
+
+      if (i.Favourite) {
+        if (index3 < 0) {
+          favorites.push({
+            title: 'Favorites',
+            data: [{Id: i.Id, notes: i.notes, Favourite: i.Favourite}],
+            CatId: i.CatId,
+          });
+        } else {
+          favorites[index3].data.push({
+            Id: i.Id,
+            notes: i.notes,
+            Favourite: i.Favourite,
+          });
+        }
       }
     });
   } catch (err) {
@@ -596,16 +626,13 @@ const HomeCategory = () => {
 
   let data = [...recents, ...favorites, ...result];
 
-  console.log(result);
-  // let data = CatNames;
-
   const defaultIndex = 0;
 
   const renderItem = i => {
     return (
       <View style={styles.container}>
         <View style={{flexDirection: 'row'}}>
-          <Text style={styles.heading}>Todos</Text>
+          <Text style={styles.heading}>Notes</Text>
 
           <Modal
             animationType="slide"
@@ -618,9 +645,9 @@ const HomeCategory = () => {
               <View style={styles.modalView1}>
                 <Image
                   style={{
-                    height: 60,
+                    height: 50,
                     borderRadius: 50,
-                    width: 60,
+                    width: 50,
                     margin: 2,
                     marginBottom: 10,
                     alignSelf: 'center',
@@ -652,37 +679,43 @@ const HomeCategory = () => {
               </View>
             </View>
           </Modal>
-          <Pressable onPress={() => setModalVisible1(true)}>
+          {/* <TouchableOpacity></TouchableOpacity> */}
+          <TouchableOpacity
+            onPress={() => setModalVisible1(true)}
+            style={{marginLeft: 230}}>
             <Image
               style={{
-                height: 60,
+                height: 45,
                 borderRadius: 50,
-                width: 60,
-                margin: 2,
-                marginLeft: 230,
+                width: 45,
+                marginTop: 5,
+                marginBottom: 5,
               }}
               source={{
                 uri: PhotoUrl,
               }}
             />
-          </Pressable>
+          </TouchableOpacity>
         </View>
+        <SearchBar
+          placeholder="Search here"
+          //onPress={() => Alert.alert('onPress')}
+          onChangeText={text => setSearch(text)}
+          onSearchPress={Keyboard.dismiss}
+          onClearPress={() => setSearch('')}
+          backgroundColor="#ffff"
+        />
 
         <ScrollView style={styles.scrollView}>
           {i.data.map(item => {
-            // <View>
-            //   <Text>{item.notes}</Text>
-            //   <Text>{item.Id}</Text>
-            // </View>
-
             if (edit) {
               return (
                 <TouchableOpacity
                   style={styles.todo}
-                  onPress={() => edittodo(item.Id, item.catid)}>
+                  onPress={() => edittodo(item.Id, item.CatId)}>
                   <TouchableOpacity
                     onPress={() => {
-                      favourite(item.Id);
+                      favourite(item);
                     }}
                     style={{
                       flexDirection: 'row',
@@ -690,33 +723,22 @@ const HomeCategory = () => {
                       marginTop: 20,
                       width: 350,
                     }}>
-                    {Fav == 0 ? (
-                      <Image
-                        style={{
-                          marginRight: 10,
-                          marginTop: 0,
-                          marginLeft: 315,
-                          width: 35,
-                          height: 35,
-                          marginBottom: 20,
-                          alignSelf: 'center',
-                        }}
-                        source={require('../assets/notfav.png')}
-                      />
-                    ) : (
-                      <Image
-                        style={{
-                          marginRight: 10,
-                          marginTop: 0,
-                          marginLeft: 315,
-                          width: 35,
-                          height: 35,
-                          marginBottom: 20,
-                          alignSelf: 'center',
-                        }}
-                        source={require('../assets/fav.png')}
-                      />
-                    )}
+                    <Image
+                      style={{
+                        marginRight: 10,
+                        marginTop: 0,
+                        marginLeft: 315,
+                        width: 35,
+                        height: 35,
+                        marginBottom: 20,
+                        alignSelf: 'center',
+                      }}
+                      source={
+                        item.Favourite
+                          ? require('../assets/fav.png')
+                          : require('../assets/notfav.png')
+                      }
+                    />
                   </TouchableOpacity>
 
                   <View
@@ -726,7 +748,13 @@ const HomeCategory = () => {
                       height: 40,
                       width: 350,
                     }}>
-                    <Text style={styles.txt}>{item.notes}</Text>
+                    <HighlightText
+                      highlightStyle={{backgroundColor: 'yellow'}}
+                      searchWords={[Search]}
+                      style={{fontWeight: 'bold', fontSize: 20}}
+                      textToHighlight={item.notes}
+                    />
+                    {/* <Text style={styles.txt}>{item.notes}</Text> */}
                   </View>
                   {/* Button Started */}
                   <View style={styles.tray}>
@@ -865,6 +893,7 @@ const HomeCategory = () => {
               );
             }
           })}
+
           {/* Modal started */}
 
           <Modal
@@ -875,25 +904,28 @@ const HomeCategory = () => {
               <View style={styles.modalView}>
                 <Text style={styles.modalText}>Enter a new Todo!! </Text>
                 <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
-                  {todos.map(item => (
-                    <View style={{flexDirection: 'row'}}>
-                      <Text>{item.Cat}</Text>
+                  {result.map(item => (
+                    <View style={{flexDirection: 'row', alignSelf: 'auto'}}>
                       <RadioButton
                         value="check"
                         status={Value === item.CatId ? 'checked' : 'unchecked'}
                         onPress={() => setValue(item.CatId)}
                         onPressIn={() => setCATID(String(item.CatId))}
                       />
+                      <Text style={{marginTop: 7}}>{item.title}</Text>
                       <Text>{'\n'}</Text>
                     </View>
                   ))}
-                  <Text>Add New Category</Text>
-                  <RadioButton
-                    value="check"
-                    status={Value === 1000 ? 'checked' : 'unchecked'}
-                    onPress={() => setValue(1000)}
-                    onPressIn={() => setCATID('false')}
-                  />
+
+                  <View style={{flexDirection: 'row', alignSelf: 'auto'}}>
+                    <RadioButton
+                      value="check"
+                      status={Value === 1000 ? 'checked' : 'unchecked'}
+                      onPress={() => setValue(1000)}
+                      onPressIn={() => setCATID('false')}
+                    />
+                    <Text style={{marginTop: 7}}>Add New Category</Text>
+                  </View>
                 </View>
 
                 {Value == 1000 ? (
@@ -914,15 +946,11 @@ const HomeCategory = () => {
                 <View style={{flexDirection: 'row'}}>
                   <Pressable
                     style={[styles.button123, styles.buttonClose]}
-                    //onPress={() => setModalVisible(!modalVisible)}>
-                    onPress={addTodo}
-                    //</View>onPressIn={catadd}
-                  >
+                    onPress={addTodo}>
                     <Text style={styles.textStyle}>Save It!!</Text>
                   </Pressable>
                   <Pressable
                     style={[styles.button123, styles.buttonClose]}
-                    //onPress={() => setModalVisible(!modalVisible)}>
                     onPress={() => {
                       setModalVisible(false);
                     }}>

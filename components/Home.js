@@ -511,45 +511,6 @@ const Home = () => {
     });
   };
 
-  const markFavHandle = ({catId, status }) => {
-    alert('fav')
-    // axios.post('https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/21/ledger_favourite', {
-    //   data: {
-    //     id:catId,
-    //     userid:UserID,
-    //     fav:status 
-    //    }
-    // } ).then(response => {
-    //   axios
-    //   .post(
-    //     'https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/21/ledger_list',
-    //     {
-    //       data: {
-    //         //userid: UserID,
-    //         userid: UserID,
-    //         moduleid: 1,
-    //         catid: '',
-    //         favourite: '',
-    //         find: '',
-    //         order: 'x.CDate DESC',
-    //         limit: 100,
-    //       },
-    //     },
-    //   )
-    //   .then(function (res) {
-    //     //console.log(res.data);
-    //     const filled = res.data.data;
-    //     if (filled == false) {
-    //       //Alert.alert(res.data.msg);
-    //     } else {
-    //       setTodos(res.data.data);
-    //     }
-    //   });
-    //    console.log('marked fav')
-    // })
-  }
-  console.log('catid saved is ' + CATID);
-
   const favourite = (item) => {
     setFav(!Fav);
     axios
@@ -672,18 +633,22 @@ const Home = () => {
                     marginTop: 20,
                     width: 350,
                   }}>
-                    <Image
-                      style={{
-                        marginRight: 10,
-                        marginTop: 0,
-                        marginLeft: 315,
-                        width: 35,
-                        height: 35,
-                        marginBottom: 20,
-                        alignSelf: 'center',
-                      }}
-                      source={item.Favourite ? require('../assets/fav.png') : require('../assets/notfav.png')}
-                    />
+                  <Image
+                    style={{
+                      marginRight: 10,
+                      marginTop: 0,
+                      marginLeft: 315,
+                      width: 35,
+                      height: 35,
+                      marginBottom: 20,
+                      alignSelf: 'center',
+                    }}
+                    source={
+                      item.Favourite
+                        ? require('../assets/fav.png')
+                        : require('../assets/notfav.png')
+                    }
+                  />
                 </TouchableOpacity>
                 {/* </View> */}
                 <View
@@ -846,10 +811,19 @@ const Home = () => {
                       status={Value === item.CatId ? 'checked' : 'unchecked'}
                       onPress={() => setValue(item.CatId)}
                       onPressIn={() => setCATID(String(item.CatId))}
-                      style={{ flex: '1'}}
+                      style={{flex: '1'}}
                     />
-                    <Text style={{ marginTop: 7 }}>{item.Cat}</Text>
+                    <Text style={{marginTop: 7}}>{item.Cat}</Text>
                     <Text>{'\n'}</Text>
+                  </View>
+                ))}
+                <View style={{flexDirection: 'row', alignSelf: 'auto'}}>
+                  <RadioButton
+                    value="check"
+                    status={Value === 1000 ? 'checked' : 'unchecked'}
+                    onPress={() => setValue(1000)}
+                    onPressIn={() => setCATID('false')}
+                  />
                   </View>
                 ))}
                  <View style ={{flexDirection: 'row', alignSelf: "auto"}}>
