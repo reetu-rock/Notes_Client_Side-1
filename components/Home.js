@@ -41,16 +41,15 @@ const Home = () => {
   const [dateTimePickerVisible, setDateTimePickerVisible] = useState(false);
   const [RemindData, setRemindData] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
-  const [Category, setCategory] = useState('');
   const [Value, setValue] = useState(null);
   const [UserID, setUserID] = useState(null);
-  const [Color, setColor] = useState('');
   const [Catname, setCatname] = useState('');
   const [CATID, setCATID] = useState('');
   const [PhotoUrl, setPhotoUrl] = useState('');
   const [modalVisible1, setModalVisible1] = useState(false);
   const [RenderState, setRenderState] = useState(null);
   const [Tray, setTray] = useState(false);
+  const [Fav, setFav] = useState(0);
 
   const storeData = async todos => {
     try {
@@ -296,44 +295,6 @@ const Home = () => {
 
   console.log('Saved user ID ' + UserID);
 
-  //adding cat
-  // const catadd = () => {
-  //   if (value == 1) {
-  //     setCatname('General');
-  //     setCATID('49');
-  //     setColor('#66ff33');
-  //   }
-  //   if (value == 2) {
-  //     setCatname('home');
-  //     setCATID('1');
-  //     setColor('#3399ff');
-  //   }
-  //   if (value == 3) {
-  //     setCatname('office');
-  //     setCATID('3');
-  //     setColor('#ff66ff');
-  //   }
-  //   if (value == 4) {
-  //     setCatname('medical');
-  //     setCATID('4');
-  //     setColor('#666633');
-  //   }
-  //   if (value == 5) {
-  //     setCatname('Vehicle');
-  //     setCATID('18');
-  //     setColor('#9900ff');
-  //   }
-  //   if (value == 6) {
-  //     setCatname('Bills');
-  //     setCATID('19');
-  //     setColor('#666699');
-  //   }
-  //   if (value == 7) {
-  //     setCatname(Category);
-  //     setCATID('false');
-  //     setColor('#993333');
-  //   }
-  // };
   const addTodo = () => {
     setModalVisible(!modalVisible);
     console.log('CatID = ' + CATID + 'Catname= ' + Catname);
@@ -341,47 +302,94 @@ const Home = () => {
     if (Reach) {
       if (!todo) return;
       else {
-        axios
-          .post(
-            'https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/21/ledger_add',
-            {
-              data: {
-                userid: UserID,
-                moduleid: 1,
-                catid: CATID,
-                catname: Catname,
-                name: 'Test',
-                notes: todo,
-                remind: 0,
-                reminds: '',
-                remindf: '',
-                status: 1,
-                date: Date.now(),
-              },
-            },
-          )
-          .then(response => {
-            setTodos([
-              ...todos,
+        if (CATID != 'false') {
+          axios
+            .post(
+              'https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/21/ledger_add',
               {
-                Id: response.data.data[0],
-                UserId: UserID,
-                ModuleId: 1,
-                Cat: Catname,
-                Catid: CATID,
-                Name: 'Test',
-                Notes: todo,
-                Status: 1,
-                remind: 0,
-                reminds: '',
-                remindf: '',
-                date: Date.now(),
+                data: {
+                  userid: UserID,
+                  moduleid: 1,
+                  catid: CATID,
+                  catname: Catname,
+                  name: 'Test',
+                  notes: todo,
+                  remind: 0,
+                  reminds: '',
+                  remindf: '',
+                  status: 1,
+                  date: Date.now(),
+                },
               },
-            ]);
-          });
+            )
+            .then(response => {
+              setTodos([
+                ...todos,
+                {
+                  Id: response.data.data[0],
+                  UserId: UserID,
+                  ModuleId: 1,
+                  Cat: '',
+                  Catid: CATID,
+                  Name: 'Test',
+                  Notes: todo,
+                  Status: 1,
+                  remind: 0,
+                  reminds: '',
+                  remindf: '',
+                  date: Date.now(),
+                },
+              ]);
+            });
 
-        setTodo('');
-        setCategory('');
+          setTodo('');
+          //setCategory('');
+        } else {
+          // for catid false
+          axios
+            .post(
+              'https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/21/ledger_add',
+              {
+                data: {
+                  userid: UserID,
+                  moduleid: 1,
+                  catid: CATID,
+                  cat: Catname,
+                  catcolor: '#FF0000',
+                  caticon: '',
+                  name: 'Test',
+                  notess: todo,
+                  remind: 0,
+                  reminds: '',
+                  remindf: '',
+                  status: 1,
+                  date: Date.now(),
+                },
+              },
+            )
+            .then(response => {
+              setTodos([
+                ...todos,
+                {
+                  Id: response.data.data[0],
+                  UserId: UserID,
+                  ModuleId: 1,
+                  Cat: Catname,
+                  Catid: CATID,
+                  Name: 'Test',
+                  Notes: todo,
+                  Status: 1,
+                  remind: 0,
+                  reminds: '',
+                  remindf: '',
+                  date: Date.now(),
+                },
+              ]);
+            });
+
+          setTodo('');
+          //setCategory('');
+        }
       }
     } else {
       if (!todo) return;
@@ -407,7 +415,7 @@ const Home = () => {
         ];
         setTodos(data);
         setTodo('');
-        setCategory('');
+        //setCategory('');
         storeData(data);
       }
     }
@@ -541,6 +549,52 @@ const Home = () => {
     })
   }
   console.log('catid saved is ' + CATID);
+
+  const favourite = Id => {
+    setFav(!Fav);
+    console.log('fav value is ' + Fav);
+
+    axios
+      .post(
+        'https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/21/ledger_favourite',
+        {
+          data: {
+            id: Id,
+            userid: UserID,
+            fav: Fav,
+          },
+        },
+      )
+      .then(response => {
+        axios
+          .post(
+            'https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/21/ledger_list',
+            {
+              data: {
+                //userid: UserID,
+                userid: UserID,
+                moduleid: 1,
+                catid: '',
+                favourite: '',
+                find: '',
+                order: 'x.CDate DESC',
+                limit: 100,
+              },
+            },
+          )
+          .then(function (res) {
+            //console.log(res.data);
+            const filled = res.data.data;
+            if (filled == false) {
+              //Alert.alert(res.data.msg);
+            } else {
+              setTodos(res.data.data);
+            }
+          });
+        console.log('marked fav');
+      });
+  };
+
   return (
     <View style={styles.container}>
       <View style={{flexDirection: 'row'}}>
@@ -611,32 +665,54 @@ const Home = () => {
         {todos.map(item => {
           if (edit) {
             return (
-              <TouchableOpacity
+              <View
                 style={styles.todo}
-                onPress={() => edittodo(item.Id, item.catid)}>
-                {/* <View
+                //onPress={() => edittodo(item.Id, item.catid)}
+              >
+                <TouchableOpacity
+                  onPress={() => {
+                    favourite(item.Id);
+                  }}
                   style={{
-                    paddingHorizontal: 5,
                     flexDirection: 'row',
-                    height: 40,
+                    height: 10,
+                    marginTop: 20,
                     width: 350,
                   }}>
-                  <Text style={styles.txt321}>Category: {item.Cat}</Text>
-                  <View
-                    style={{
-                      marginTop: 0,
-                      marginLeft: 5,
-                      width: 25,
-                      height: 25,
-                      backgroundColor: item.color,
-                    }}
-                  />
-                </View> */}
+                  {Fav == 0 ? (
+                    <Image
+                      style={{
+                        marginRight: 10,
+                        marginTop: 0,
+                        marginLeft: 315,
+                        width: 35,
+                        height: 35,
+                        marginBottom: 20,
+                        alignSelf: 'center',
+                      }}
+                      source={require('../assets/notfav.png')}
+                    />
+                  ) : (
+                    <Image
+                      style={{
+                        marginRight: 10,
+                        marginTop: 0,
+                        marginLeft: 315,
+                        width: 35,
+                        height: 35,
+                        marginBottom: 20,
+                        alignSelf: 'center',
+                      }}
+                      source={require('../assets/fav.png')}
+                    />
+                  )}
+                </TouchableOpacity>
+                {/* </View> */}
                 <View
                   style={{
                     paddingHorizontal: 5,
                     //flexDirection: 'row',
-                    height: 40,
+                    height: 50,
                     width: 350,
                   }}>
                   <Text style={styles.txt}>{item.Notes}</Text>
@@ -658,7 +734,7 @@ const Home = () => {
                         height: 35,
                         width: 35,
                         marginLeft: -15,
-                        marginTop: 15,
+                        //marginTop: 15,
                         alignSelf: 'center',
                       }}
                       source={require('../assets/options.png')}
@@ -744,7 +820,7 @@ const Home = () => {
                     )
                   }
                 </View>
-              </TouchableOpacity>
+              </View>
             );
           }
           if (!edit && item.Id === EditID) {
