@@ -298,7 +298,6 @@ const Home = () => {
   const addTodo = () => {
     setModalVisible(!modalVisible);
     console.log('CatID = ' + CATID + 'Catname= ' + Catname);
-
     if (Reach) {
       if (!todo) return;
       else {
@@ -311,7 +310,7 @@ const Home = () => {
                   userid: UserID,
                   moduleid: 1,
                   catid: CATID,
-                  catname: Catname,
+                  cat: Catname,
                   name: 'Test',
                   notes: todo,
                   remind: 0,
@@ -513,47 +512,48 @@ const Home = () => {
   };
 
   const markFavHandle = ({catId, status }) => {
-    axios.post('https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/21/ledger_favourite', {
-      data: {
-        id:catId,
-        userid:UserID,
-        fav:status 
-       }
-    } ).then(response => {
-      axios
-      .post(
-        'https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/21/ledger_list',
-        {
-          data: {
-            //userid: UserID,
-            userid: UserID,
-            moduleid: 1,
-            catid: '',
-            favourite: '',
-            find: '',
-            order: 'x.CDate DESC',
-            limit: 100,
-          },
-        },
-      )
-      .then(function (res) {
-        //console.log(res.data);
-        const filled = res.data.data;
-        if (filled == false) {
-          //Alert.alert(res.data.msg);
-        } else {
-          setTodos(res.data.data);
-        }
-      });
-       console.log('marked fav')
-    })
+    alert('fav')
+    // axios.post('https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/21/ledger_favourite', {
+    //   data: {
+    //     id:catId,
+    //     userid:UserID,
+    //     fav:status 
+    //    }
+    // } ).then(response => {
+    //   axios
+    //   .post(
+    //     'https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/21/ledger_list',
+    //     {
+    //       data: {
+    //         //userid: UserID,
+    //         userid: UserID,
+    //         moduleid: 1,
+    //         catid: '',
+    //         favourite: '',
+    //         find: '',
+    //         order: 'x.CDate DESC',
+    //         limit: 100,
+    //       },
+    //     },
+    //   )
+    //   .then(function (res) {
+    //     //console.log(res.data);
+    //     const filled = res.data.data;
+    //     if (filled == false) {
+    //       //Alert.alert(res.data.msg);
+    //     } else {
+    //       setTodos(res.data.data);
+    //     }
+    //   });
+    //    console.log('marked fav')
+    // })
   }
   console.log('catid saved is ' + CATID);
 
   const favourite = Id => {
     setFav(!Fav);
     console.log('fav value is ' + Fav);
-
+    console.log('fav value is ' + Id);
     axios
       .post(
         'https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/21/ledger_favourite',
