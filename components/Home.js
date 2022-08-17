@@ -862,24 +862,27 @@ const Home = () => {
               <Text style={styles.modalText}>Enter a new Todo!! </Text>
               <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
                 {todos.map(item => (
-                  <View style={{flexDirection: 'row'}}>
-                    <Text>{item.Cat}</Text>
+                  <View style ={{flexDirection: 'row', alignSelf: "auto"}}>
                     <RadioButton
                       value="check"
                       status={Value === item.CatId ? 'checked' : 'unchecked'}
                       onPress={() => setValue(item.CatId)}
                       onPressIn={() => setCATID(String(item.CatId))}
+                      style={{ flex: '1'}}
                     />
+                    <Text style={{ marginTop: 7 }}>{item.Cat}</Text>
                     <Text>{'\n'}</Text>
                   </View>
                 ))}
-                <Text>Add New Category</Text>
-                <RadioButton
+                 <View style ={{flexDirection: 'row', alignSelf: "auto"}}>
+                  <RadioButton
                   value="check"
                   status={Value === 1000 ? 'checked' : 'unchecked'}
                   onPress={() => setValue(1000)}
                   onPressIn={() => setCATID('false')}
                 />
+                <Text style={{ marginTop: 7 }}>Add New Category</Text>
+                </View>
               </View>
 
               {Value == 1000 ? (
