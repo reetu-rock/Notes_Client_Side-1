@@ -550,18 +550,16 @@ const Home = () => {
   }
   console.log('catid saved is ' + CATID);
 
-  const favourite = Id => {
+  const favourite = (item) => {
     setFav(!Fav);
-    console.log('fav value is ' + Fav);
-    console.log('fav value is ' + Id);
     axios
       .post(
         'https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/21/ledger_favourite',
         {
           data: {
-            id: Id,
+            id: item.Id,
             userid: UserID,
-            fav: Fav,
+            fav: !item.isFavourite,
           },
         },
       )
@@ -574,9 +572,6 @@ const Home = () => {
                 //userid: UserID,
                 userid: UserID,
                 moduleid: 1,
-                catid: '',
-                favourite: '',
-                find: '',
                 order: 'x.CDate DESC',
                 limit: 100,
               },
@@ -671,7 +666,7 @@ const Home = () => {
               >
                 <TouchableOpacity
                   onPress={() => {
-                    favourite(item.Id);
+                    favourite(item);
                   }}
                   style={{
                     flexDirection: 'row',
@@ -679,7 +674,6 @@ const Home = () => {
                     marginTop: 20,
                     width: 350,
                   }}>
-                  {Fav == 0 ? (
                     <Image
                       style={{
                         marginRight: 10,
@@ -690,22 +684,8 @@ const Home = () => {
                         marginBottom: 20,
                         alignSelf: 'center',
                       }}
-                      source={require('../assets/notfav.png')}
+                      source={item.Favourite ? require('../assets/fav.png') : require('../assets/notfav.png')}
                     />
-                  ) : (
-                    <Image
-                      style={{
-                        marginRight: 10,
-                        marginTop: 0,
-                        marginLeft: 315,
-                        width: 35,
-                        height: 35,
-                        marginBottom: 20,
-                        alignSelf: 'center',
-                      }}
-                      source={require('../assets/fav.png')}
-                    />
-                  )}
                 </TouchableOpacity>
                 {/* </View> */}
                 <View
