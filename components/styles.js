@@ -33,9 +33,10 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   heading: {
-    marginTop: 10,
+    //marginTop: 10,
     marginVertical: 5,
-    fontSize: 30,
+    fontSize: 25,
+    fontStyle: 'italic',
     fontWeight: 'bold',
     textDecorationLine: 'underline',
     color: 'black',

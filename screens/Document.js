@@ -60,8 +60,8 @@ const Document = () => {
           },
         },
       )
-      .then(res => {
-        setUserID(res.data.data.userdata[0].Id);
+      .then(response => {
+        setUserID(response.data.data[0]);
       });
   }, []);
 

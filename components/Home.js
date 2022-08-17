@@ -298,7 +298,6 @@ const Home = () => {
   const addTodo = () => {
     setModalVisible(!modalVisible);
     console.log('CatID = ' + CATID + 'Catname= ' + Catname);
-
     if (Reach) {
       if (!todo) return;
       else {
@@ -311,7 +310,7 @@ const Home = () => {
                   userid: UserID,
                   moduleid: 1,
                   catid: CATID,
-                  catname: Catname,
+                  cat: Catname,
                   name: 'Test',
                   notes: todo,
                   remind: 0,
@@ -511,20 +510,56 @@ const Home = () => {
       }
     });
   };
+
+  const markFavHandle = ({catId, status}) => {
+    alert('fav');
+    // axios.post('https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/21/ledger_favourite', {
+    //   data: {
+    //     id:catId,
+    //     userid:UserID,
+    //     fav:status
+    //    }
+    // } ).then(response => {
+    //   axios
+    //   .post(
+    //     'https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/21/ledger_list',
+    //     {
+    //       data: {
+    //         //userid: UserID,
+    //         userid: UserID,
+    //         moduleid: 1,
+    //         catid: '',
+    //         favourite: '',
+    //         find: '',
+    //         order: 'x.CDate DESC',
+    //         limit: 100,
+    //       },
+    //     },
+    //   )
+    //   .then(function (res) {
+    //     //console.log(res.data);
+    //     const filled = res.data.data;
+    //     if (filled == false) {
+    //       //Alert.alert(res.data.msg);
+    //     } else {
+    //       setTodos(res.data.data);
+    //     }
+    //   });
+    //    console.log('marked fav')
+    // })
+  };
   console.log('catid saved is ' + CATID);
 
-  const favourite = Id => {
+  const favourite = item => {
     setFav(!Fav);
-    console.log('fav value is ' + Fav);
-
     axios
       .post(
         'https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/21/ledger_favourite',
         {
           data: {
-            id: Id,
+            id: item.Id,
             userid: UserID,
-            fav: Fav,
+            fav: !item.Favourite,
           },
         },
       )
@@ -537,9 +572,6 @@ const Home = () => {
                 //userid: UserID,
                 userid: UserID,
                 moduleid: 1,
-                catid: '',
-                favourite: '',
-                find: '',
                 order: 'x.CDate DESC',
                 limit: 100,
               },
@@ -633,42 +665,29 @@ const Home = () => {
                 //onPress={() => edittodo(item.Id, item.catid)}
               >
                 <TouchableOpacity
-                  onPress={() => {
-                    favourite(item.Id);
-                  }}
+                  onPress={() => favourite(item)}
                   style={{
                     flexDirection: 'row',
                     height: 10,
                     marginTop: 20,
                     width: 350,
                   }}>
-                  {Fav == 0 ? (
-                    <Image
-                      style={{
-                        marginRight: 10,
-                        marginTop: 0,
-                        marginLeft: 315,
-                        width: 35,
-                        height: 35,
-                        marginBottom: 20,
-                        alignSelf: 'center',
-                      }}
-                      source={require('../assets/notfav.png')}
-                    />
-                  ) : (
-                    <Image
-                      style={{
-                        marginRight: 10,
-                        marginTop: 0,
-                        marginLeft: 315,
-                        width: 35,
-                        height: 35,
-                        marginBottom: 20,
-                        alignSelf: 'center',
-                      }}
-                      source={require('../assets/fav.png')}
-                    />
-                  )}
+                  <Image
+                    style={{
+                      marginRight: 10,
+                      marginTop: 0,
+                      marginLeft: 315,
+                      width: 35,
+                      height: 35,
+                      marginBottom: 20,
+                      alignSelf: 'center',
+                    }}
+                    source={
+                      item.Favourite
+                        ? require('../assets/fav.png')
+                        : require('../assets/notfav.png')
+                    }
+                  />
                 </TouchableOpacity>
                 {/* </View> */}
                 <View
@@ -825,24 +844,27 @@ const Home = () => {
               <Text style={styles.modalText}>Enter a new Todo!! </Text>
               <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
                 {todos.map(item => (
-                  <View style={{flexDirection: 'row'}}>
-                    <Text>{item.Cat}</Text>
+                  <View style={{flexDirection: 'row', alignSelf: 'auto'}}>
                     <RadioButton
                       value="check"
                       status={Value === item.CatId ? 'checked' : 'unchecked'}
                       onPress={() => setValue(item.CatId)}
                       onPressIn={() => setCATID(String(item.CatId))}
+                      style={{flex: '1'}}
                     />
+                    <Text style={{marginTop: 7}}>{item.Cat}</Text>
                     <Text>{'\n'}</Text>
                   </View>
                 ))}
-                <Text>Add New Category</Text>
-                <RadioButton
-                  value="check"
-                  status={Value === 1000 ? 'checked' : 'unchecked'}
-                  onPress={() => setValue(1000)}
-                  onPressIn={() => setCATID('false')}
-                />
+                <View style={{flexDirection: 'row', alignSelf: 'auto'}}>
+                  <RadioButton
+                    value="check"
+                    status={Value === 1000 ? 'checked' : 'unchecked'}
+                    onPress={() => setValue(1000)}
+                    onPressIn={() => setCATID('false')}
+                  />
+                  <Text style={{marginTop: 7}}>Add New Category</Text>
+                </View>
               </View>
 
               {Value == 1000 ? (
