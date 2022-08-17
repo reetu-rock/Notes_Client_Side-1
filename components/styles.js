@@ -92,7 +92,7 @@ export const styles = StyleSheet.create({
     //marginHorizontal: 50,
     marginBottom: 20,
     borderRadius: 20,
-    height: 110,
+    height: 145,
     width: 370,
   },
 
@@ -218,7 +218,7 @@ export const styles = StyleSheet.create({
     backgroundColor: '#DCDCDC',
     paddingHorizontal: 20,
     paddingVertical: 10,
-    marginBottom: 5,
+    //marginBottom: 5,
     marginHorizontal: 25,
     borderRadius: 50,
     height: 50,
