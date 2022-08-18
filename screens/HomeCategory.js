@@ -53,43 +53,43 @@ const HomeCategory = () => {
   const [Fav, setFav] = useState(false);
   const [Search, setSearch] = useState('');
 
-  const storeData = async todos => {
-    try {
-      const jsonValue = JSON.stringify(todos);
-      await AsyncStorage.setItem('todos', jsonValue);
-    } catch (e) {
-      // saving error
-    }
-  };
+  // const storeData = async todos => {
+  //   try {
+  //     const jsonValue = JSON.stringify(todos);
+  //     await AsyncStorage.setItem('todos', jsonValue);
+  //   } catch (e) {
+  //     // saving error
+  //   }
+  // };
 
-  const getData = async () => {
-    try {
-      const jsonValue = await AsyncStorage.getItem('todos');
-      return jsonValue != null ? setTodos(JSON.parse(jsonValue)) : null;
-    } catch (e) {
-      // error reading value
-    }
-  };
+  // const getData = async () => {
+  //   try {
+  //     const jsonValue = await AsyncStorage.getItem('todos');
+  //     return jsonValue != null ? setTodos(JSON.parse(jsonValue)) : null;
+  //   } catch (e) {
+  //     // error reading value
+  //   }
+  // };
 
-  const removeData = async todos => {
-    try {
-      const jsonValue = JSON.stringify(todos);
-      await AsyncStorage.setItem('todos', jsonValue);
-    } catch (e) {
-      // saving error
-    }
-    Alert.alert('Item Removed');
-  };
+  // const removeData = async todos => {
+  //   try {
+  //     const jsonValue = JSON.stringify(todos);
+  //     await AsyncStorage.setItem('todos', jsonValue);
+  //   } catch (e) {
+  //     // saving error
+  //   }
+  //   Alert.alert('Item Removed');
+  // };
 
-  const editData = async todos => {
-    try {
-      const jsonValue = JSON.stringify(todos);
-      await AsyncStorage.setItem('todos', jsonValue);
-    } catch (e) {
-      // saving error
-    }
-    Alert.alert('Item Edited');
-  };
+  // const editData = async todos => {
+  //   try {
+  //     const jsonValue = JSON.stringify(todos);
+  //     await AsyncStorage.setItem('todos', jsonValue);
+  //   } catch (e) {
+  //     // saving error
+  //   }
+  //   Alert.alert('Item Edited');
+  // };
 
   const server = async () => {
     const data = await IsReachable();
@@ -145,52 +145,60 @@ const HomeCategory = () => {
           )
 
           .then(res => {
-            setTodos(
-              todos.map(item =>
-                item.Id === Id
-                  ? {
-                      Id: item.Id,
-                      UserId: UserID,
-                      ModuleId: 1,
-                      Cat: item.Cat,
-                      CatId: CATID,
-                      Name: 'Test',
-                      Notes: editText,
-                      Status: 1,
-                      remind: 0,
-                      reminds: '',
-                      remindf: '',
-                      date: Date.now(),
-                    }
-                  : item,
-              ),
-            );
+            axios
+              .post(
+                'https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/21/ledger_list',
+                {
+                  data: {
+                    //userid: UserID,
+                    userid: UserID,
+                    moduleid: 1,
+                    order: 'x.CDate DESC',
+                    limit: 100,
+                  },
+                },
+              )
+              .then(function (res) {
+                //console.log(res.data);
+                const filled = res.data.data;
+                if (filled == false) {
+                  //Alert.alert(res.data.msg);
+                } else {
+                  setTodos(res.data.data);
+                }
+              });
+            console.log('ledger edited');
           });
-      } else {
-        let data2 = todos.map(item =>
-          item.Id === Id
-            ? {
-                Id: item.Id,
-                UserId: UserID,
-                ModuleId: 1,
-                Cat: item.Cat,
-                CatId: CATID,
-                Name: 'Test',
-                Notes: editText,
-                Status: 1,
-                remind: 0,
-                reminds: '',
-                remindf: '',
-                date: Date.now(),
-              }
-            : item,
-        );
-        setEditText('');
-        setTodos(data2);
-        editData(data2);
       }
+
+      // else {
+      //   let data2 = todos.map(item =>
+      //     item.Id === Id
+      //       ? {
+      //           Id: item.Id,
+      //           UserId: UserID,
+      //           ModuleId: 1,
+      //           Cat: item.Cat,
+      //           CatId: CATID,
+      //           Name: 'Test',
+      //           Notes: editText,
+      //           Status: 1,
+      //           remind: 0,
+      //           reminds: '',
+      //           remindf: '',
+      //           date: Date.now(),
+      //         }
+      //       : item,
+      //   );
+      //   setEditText('');
+      //   setTodos(data2);
+      //   editData(data2);
+      // }
+
       setEdit(true);
     }
+
+    setTray(false);
   };
 
   const GoBack = id => {
@@ -220,16 +228,32 @@ const HomeCategory = () => {
             },
           },
         )
-        .then(res => {
-          setTodos(todos.filter(item => item.Id != Id));
-          Alert.alert('Item Removed');
-          console.log(res.data);
+        .then(response => {
+          axios
+            .post(
+              'https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/21/ledger_list',
+              {
+                data: {
+                  //userid: UserID,
+                  userid: UserID,
+                  moduleid: 1,
+                  catid: '',
+                  favourite: '',
+                  find: '',
+                  order: 'x.CDate DESC',
+                  limit: 100,
+                  status: 1,
+                },
+              },
+            )
+            .then(function (res) {
+              setTodos(res.data.data);
+            });
+          console.log('ledger deleted');
         });
-    } else {
-      let data1 = todos.filter(item => item.Id !== Id);
-      setTodos(todos.filter(item => item.Id !== Id));
-      removeData(data1);
     }
+
+    setTray(false);
   };
 
   //share todo
@@ -242,13 +266,14 @@ const HomeCategory = () => {
         onShare(item.Notes);
       }
     });
+    setTray(false);
   };
 
   const onShare = information => {
     let options = {
       title: 'Awesome Contents',
       message: information,
-      url: 'https://www.mail-signatures.com/wp-content/uploads/2019/02/How-to-find-direct-link-to-image_Blog-Picture.png',
+      //url: 'https://www.mail-signatures.com/wp-content/uploads/2019/02/How-to-find-direct-link-to-image_Blog-Picture.png',
     };
     Share.open(options)
       .then(res => {
@@ -286,20 +311,21 @@ const HomeCategory = () => {
 
     Alert.alert('Reminder Added ' + dateTime);
 
-    axios.post('http://10.0.2.2:5000/createrem/', {
-      id: uuid.v4(),
-      guid: Uid,
-      info: RemindData,
-      timedate: dateTime,
-    });
-  };
-  console.log('Saved user ID in Test ' + UserID);
+    // axios.post('http://10.0.2.2:5000/createrem/', {
+    //   id: uuid.v4(),
+    //   guid: Uid,
+    //   info: RemindData,
+    //   timedate: dateTime,
+    // });
 
-  //Adding todo
+    setTray(false);
+  };
+  // console.log('Saved user ID in Test ' + UserID);
+
+  //Adding modified todo
 
   const addTodo = () => {
     setModalVisible(!modalVisible);
-    console.log('the todo is' + todo);
 
     if (Reach) {
       if (!todo) return;
@@ -325,23 +351,29 @@ const HomeCategory = () => {
               },
             )
             .then(response => {
-              setTodos([
-                ...todos,
-                {
-                  Id: response.data.data[0],
-                  UserId: UserID,
-                  ModuleId: 1,
-                  Cat: '',
-                  CatId: CATID,
-                  Name: 'Test',
-                  Notes: todo,
-                  Status: 1,
-                  remind: 0,
-                  reminds: '',
-                  remindf: '',
-                  date: Date.now(),
-                },
-              ]);
+              axios
+                .post(
+                  'https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/21/ledger_list',
+                  {
+                    data: {
+                      //userid: UserID,
+                      userid: UserID,
+                      moduleid: 1,
+                      order: 'x.CDate DESC',
+                      limit: 100,
+                    },
+                  },
+                )
+                .then(function (res) {
+                  //console.log(res.data);
+                  const filled = res.data.data;
+                  if (filled == false) {
+                    //Alert.alert(res.data.msg);
+                  } else {
+                    setTodos(res.data.data);
+                  }
+                });
+              console.log('added ledger');
             });
 
           setTodo('');
@@ -360,7 +392,7 @@ const HomeCategory = () => {
                   catcolor: '#FF0000',
                   caticon: '',
                   name: 'Test',
-                  notess: todo,
+                  notes: todo,
                   remind: 0,
                   reminds: '',
                   remindf: '',
@@ -370,57 +402,64 @@ const HomeCategory = () => {
               },
             )
             .then(response => {
-              setTodos([
-                ...todos,
-                {
-                  Id: response.data.data[0],
-                  UserId: UserID,
-                  ModuleId: 1,
-                  Cat: Catname,
-                  CatId: CATID,
-                  Name: 'Test',
-                  Notes: todo,
-                  Status: 1,
-                  remind: 0,
-                  reminds: '',
-                  remindf: '',
-                  date: Date.now(),
-                },
-              ]);
+              axios
+                .post(
+                  'https://www.schoolwise.in/apimobile/notewise/depot/walnut/hRs6/21/ledger_list',
+                  {
+                    data: {
+                      //userid: UserID,
+                      userid: UserID,
+                      moduleid: 1,
+                      order: 'x.CDate DESC',
+                      limit: 100,
+                    },
+                  },
+                )
+                .then(function (res) {
+                  //console.log(res.data);
+                  const filled = res.data.data;
+                  if (filled == false) {
+                    //Alert.alert(res.data.msg);
+                  } else {
+                    setTodos(res.data.data);
+                  }
+                });
+              console.log('marked fav');
             });
 
           setTodo('');
           //setCategory('');
         }
       }
-    } else {
-      if (!todo) return;
-      else {
-        console.log(Catname);
-        console.log(CATID);
-        let data = [
-          ...todos,
-          {
-            Id: uuid.v4(),
-            UserId: UserID,
-            ModuleId: 1,
-            Cat: Catname,
-            CatId: CATID,
-            Name: 'Test',
-            Notes: todo,
-            Status: 1,
-            remind: 0,
-            reminds: '',
-            remindf: '',
-            date: Date.now(),
-          },
-        ];
-        setTodos(data);
-        setTodo('');
-        //setCategory('');
-        storeData(data);
-      }
     }
+    // else {
+    //   if (!todo) return;
+    //   else {
+    //     console.log(Catname);
+    //     console.log(CATID);
+    //     let data = [
+    //       ...todos,
+    //       {
+    //         Id: uuid.v4(),
+    //         UserId: UserID,
+    //         ModuleId: 1,
+    //         Cat: Catname,
+    //         CatId: CATID,
+    //         Name: 'Test',
+    //         Notes: todo,
+    //         Status: 1,
+    //         remind: 0,
+    //         reminds: '',
+    //         remindf: '',
+    //         date: Date.now(),
+    //       },
+    //     ];
+    //     setTodos(data);
+    //     setTodo('');
+    //     //setCategory('');
+    //     storeData(data);
+    //   }
+    // }
     setEdit(true);
   };
 
@@ -491,11 +530,11 @@ const HomeCategory = () => {
     subscribe();
   }, [UserID]);
 
-  useEffect(() => {
-    if (!Reach) {
-      getData();
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (!Reach) {
+  //     getData();
+  //   }
+  // }, []);
 
   const onSelectSwitch = index => {
     //alert('Selected index: ' + index);
@@ -624,7 +663,10 @@ const HomeCategory = () => {
     ('error in fetching');
   }
 
-  let data = [...recents, ...favorites, ...result];
+  //let data1 = [{title: ''}, ...recents, ...favorites, ...result];
+  let data = [{title: '', data: []}, ...recents, ...favorites, ...result];
+
+  console.log(result);
 
   const defaultIndex = 0;
 
@@ -705,7 +747,6 @@ const HomeCategory = () => {
           onClearPress={() => setSearch('')}
           backgroundColor="#ffff"
         />
-
         <ScrollView style={styles.scrollView}>
           {i.data.map(item => {
             if (edit) {
@@ -751,7 +792,7 @@ const HomeCategory = () => {
                     <HighlightText
                       highlightStyle={{backgroundColor: 'yellow'}}
                       searchWords={[Search]}
-                      style={{fontWeight: 'bold', fontSize: 20}}
+                      style={{fontWeight: 'bold', fontSize: 20, color: 'black'}}
                       textToHighlight={item.notes}
                     />
                     {/* <Text style={styles.txt}>{item.notes}</Text> */}
@@ -790,7 +831,7 @@ const HomeCategory = () => {
                             color="black"
                             onPress={showDatePicker}
                             onPressIn={() => {
-                              Picker(item.info);
+                              Picker(item.notes);
                             }}>
                             <Image
                               style={{
@@ -865,7 +906,7 @@ const HomeCategory = () => {
             if (!edit && item.Id === EditID) {
               return (
                 <View style={styles.todo321}>
-                  <Text style={styles.txt321}>Category: {item.Cat}</Text>
+                  {/* <Text style={styles.txt321}>Category: {item.title}</Text> */}
                   <TextInput
                     style={styles.inp321}
                     value={editText}
@@ -912,7 +953,9 @@ const HomeCategory = () => {
                         onPress={() => setValue(item.CatId)}
                         onPressIn={() => setCATID(String(item.CatId))}
                       />
-                      <Text style={{marginTop: 7}}>{item.title}</Text>
+                      <Text style={{marginTop: 7, color: 'black'}}>
+                        {item.title}
+                      </Text>
                       <Text>{'\n'}</Text>
                     </View>
                   ))}
@@ -924,13 +967,16 @@ const HomeCategory = () => {
                       onPress={() => setValue(1000)}
                       onPressIn={() => setCATID('false')}
                     />
-                    <Text style={{marginTop: 7}}>Add New Category</Text>
+                    <Text style={{marginTop: 7, color: 'black'}}>
+                      Add New Category
+                    </Text>
                   </View>
                 </View>
 
                 {Value == 1000 ? (
                   <View>
                     <TextInput
+                      placeholderTextColor="black"
                       style={styles.inp1}
                       placeholder="Add a new category"
                       onChangeText={text => setCatname(text)}></TextInput>
@@ -938,6 +984,7 @@ const HomeCategory = () => {
                 ) : null}
 
                 <TextInput
+                  placeholderTextColor="black"
                   style={styles.inp1}
                   onChangeText={text => setTodo(text)}
                   placeholder="Enter the Todo"
@@ -971,7 +1018,6 @@ const HomeCategory = () => {
       </View>
     );
   };
-
   const onChangeTab = index => {};
   return (
     <DynamicTabView
